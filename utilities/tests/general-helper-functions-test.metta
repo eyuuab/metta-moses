@@ -199,33 +199,33 @@
 ;; !(assertEqual (hasOneAtom ()) False)
 
 
-; !(bind! &space (new-space))
-; !(add-atom &space A)
-; !(add-atom &space C)
-; !(add-atom &space C)
+!(bind! &space (new-space))
+!(add-atom &space A)
+!(add-atom &space C)
+!(add-atom &space C)
 
-; ;; ;; FIX: Failing Test case
-; ;; !(assertEqualToResult (let $_ (update-atom &space A B) (get-atoms &space)) (B C C))
-; ;; !(assertEqualToResult (let $_ (update-atom &space D E) (get-atoms &space)) (B C C E))
-; ;; !(assertEqualToResult (let $_ (update-atom &space C 1) (get-atoms &space)) (B 1 E))
-; ;; !(assertEqualToResult (let $_ (clearSpace &space) (get-atoms &space)) ())
+;; ;; FIX: Failing Test case
+;; !(assertEqualToResult (let $_ (update-atom &space A B) (get-atoms &space)) (B C C))
+;; !(assertEqualToResult (let $_ (update-atom &space D E) (get-atoms &space)) (B C C E))
+;; !(assertEqualToResult (let $_ (update-atom &space C 1) (get-atoms &space)) (B 1 E))
+;; !(assertEqualToResult (let $_ (clearSpace &space) (get-atoms &space)) ())
 
-; ;; ;; FIX: Failing Test case
-; ;; !(assertEqual (appendAtom 1 ()) (1))
-; ;; !(assertEqual (appendAtom 1 (1 2)) (1 2 1))
-; ;; !(assertEqual (appendAtom A (B C)) (B C A))
-; ;; !(assertEqual (appendAtom (A) (B C)) (B C (A)))
+;; ;; FIX: Failing Test case
+;; !(assertEqual (appendAtom 1 ()) (1))
+;; !(assertEqual (appendAtom 1 (1 2)) (1 2 1))
+;; !(assertEqual (appendAtom A (B C)) (B C A))
+;; !(assertEqual (appendAtom (A) (B C)) (B C (A)))
 
-; !(assertEqual (max 1 2) 2)
-; !(assertEqual (max 2 4) 4)
+!(assertEqual (max 1 2) 2)
+!(assertEqual (max 2 4) 4)
 
-; ;; ;; FIX: Failing Test case
-; ;; !(assertEqual (gen 1 (0)) (1 0))
-; ;; !(assertEqual (gen 3 (0)) (3 2 1 0))
+;; ;; FIX: Failing Test case
+;; !(assertEqual (gen 1 (0)) (1 0))
+;; !(assertEqual (gen 3 (0)) (3 2 1 0))
 
-; !(assertEqual (decons (A B C)) (A (B C)))
-; !(assertEqual (decons ()) (if False ((car-atom ()) (cdr-atom ())) (Error Unit Or Symbol cannot be deconstructed)))
-; !(assertEqual (decons (A)) (A ()))
+!(assertEqual (decons (A B C)) (A (B C)))
+!(assertEqual (decons ()) (if False ((car-atom ()) (cdr-atom ())) (Error Unit Or Symbol cannot be deconstructed)))
+!(assertEqual (decons (A)) (A ()))
 
 ; ;; ;; FIX: Failing Test case
 ; ;; !(assertEqual (zip (A B C) (1 2 3)) ((A 1) (B 2) (C 3)))
