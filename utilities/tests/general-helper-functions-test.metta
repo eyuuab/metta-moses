@@ -108,48 +108,48 @@
 !(assertEqual (map greaterThanTen (1 10 2 23 32 7 8 43 0 2)) (False False False True True False False True False False))
 !(assertEqual (map greaterThanTen (1 10 2 23 32 7 8 43 0)) (False False False True True False False True False))
 
-; ;; Test count atom function
-; !(assertEqual (count expr (bop expr expr bop bop expr x y a expr u expr z a)) 5)
-; !(assertEqual (count bop (bop expr expr bop bop expr x y a expr u expr z a)) 3)
-; !(assertEqual (count x (bop expr expr bop bop expr x y a expr u expr z a)) 1)
-; !(assertEqual (count u (bop expr expr bop bop expr x y a expr u expr z a)) 1)
-; !(assertEqual (count f (bop expr expr bop bop expr x y a expr u expr z a)) 0)
-; !(assertEqual (count z (bop expr expr bop bop expr x y a expr u expr z a)) 1)
-; !(assertEqual (count expr ()) 0)
-; !(assertEqual (count expr (expr)) 1)
-; !(assertEqual (count expr (bop)) 0)
+;; Test count atom function
+!(assertEqual (count expr (bop expr expr bop bop expr x y a expr u expr z a)) 5)
+!(assertEqual (count bop (bop expr expr bop bop expr x y a expr u expr z a)) 3)
+!(assertEqual (count x (bop expr expr bop bop expr x y a expr u expr z a)) 1)
+!(assertEqual (count u (bop expr expr bop bop expr x y a expr u expr z a)) 1)
+!(assertEqual (count f (bop expr expr bop bop expr x y a expr u expr z a)) 0)
+!(assertEqual (count z (bop expr expr bop bop expr x y a expr u expr z a)) 1)
+!(assertEqual (count expr ()) 0)
+!(assertEqual (count expr (expr)) 1)
+!(assertEqual (count expr (bop)) 0)
 
-; ;; Test sum function
-; !(assertEqual (sum (1 2 3 4 5 6 7 8 9 10)) 55)
-; !(assertEqual (sum (1 1 1 1)) 4)
-; !(assertEqual (sum (1)) 1)
+;; Test sum function
+!(assertEqual (sum (1 2 3 4 5 6 7 8 9 10)) 55)
+!(assertEqual (sum (1 1 1 1)) 4)
+!(assertEqual (sum (1)) 1)
 
-; ;; Test curry function
-; !(assertEqual (((curry +) 1) 2) 3)
-; !(assertEqual (((curry -) 5) 4) 1)
+;; Test curry function
+!(assertEqual (((curry +) 1) 2) 3)
+!(assertEqual (((curry -) 5) 4) 1)
 
-; ;; Test case for curry 2 function
-; (: addThree (-> Number Number Number Number))
-; (= (addThree $x $y $z) (+ $x (+ $y $z)))
+;; Test case for curry 2 function
+(: addThree (-> Number Number Number Number))
+(= (addThree $x $y $z) (+ $x (+ $y $z)))
 
-; !(assertEqual (get-type ((curry2 addThree) 1)) (-> Number Number Number))
-; !(assertEqual (get-type (((curry2 addThree) 1) 2 3)) Number)
-; !(assertEqual (((curry2 addThree) 1) 2 3) 6)
+!(assertEqual (get-type ((curry2 addThree) 1)) (-> Number Number Number))
+!(assertEqual (get-type (((curry2 addThree) 1) 2 3)) Number)
+!(assertEqual (((curry2 addThree) 1) 2 3) 6)
 
-; !(assertEqual (get-type ((curry ((curry2 addThree) 1)) 2)) (-> Number Number))
-; !(assertEqual (((curry ((curry2 addThree) 1)) 2) 3) 6)
+!(assertEqual (get-type ((curry ((curry2 addThree) 1)) 2)) (-> Number Number))
+!(assertEqual (((curry ((curry2 addThree) 1)) 2) 3) 6)
 
-; ;; ;; Test filter function ;; FIX: Failing Test case
-; ;; !(assertEqual (collapse (filter isUnit (9 10 () 5 4 ()))) (() ()))
-; ;; !(assertEqual (collapse (filter hasOneAtom (9 10 (Hello) 5 4 (Nop) ()))) ((Hello) (Nop)))
-; ;; !(assertEqual (collapse (filter isZero (9 10 0 5 4 0))) (0 0))
-; ;; !(assertEqual (collapse (filter greaterThanTen (9 10 12 5 4 28))) (12 28))
+;; ;; Test filter function ;; FIX: Failing Test case
+;; !(assertEqual (collapse (filter isUnit (9 10 () 5 4 ()))) (() ()))
+;; !(assertEqual (collapse (filter hasOneAtom (9 10 (Hello) 5 4 (Nop) ()))) ((Hello) (Nop)))
+;; !(assertEqual (collapse (filter isZero (9 10 0 5 4 0))) (0 0))
+;; !(assertEqual (collapse (filter greaterThanTen (9 10 12 5 4 28))) (12 28))
 
-; ;; Test wrapper function for filter function
-; !(assertEqual (wrapper isZero 0) 0)
-; !(assertEqual (wrapper isZero 1) (empty))
-; !(assertEqual (wrapper isUnit 1) (empty))
-; !(assertEqual (wrapper isUnit ()) ())
+;; Test wrapper function for filter function
+!(assertEqual (wrapper isZero 0) 0)
+!(assertEqual (wrapper isZero 1) (empty))
+!(assertEqual (wrapper isUnit 1) (empty))
+!(assertEqual (wrapper isUnit ()) ())
 
 
 ; ;; Test for add list to space
