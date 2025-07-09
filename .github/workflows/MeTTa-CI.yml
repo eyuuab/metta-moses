@@ -2,9 +2,9 @@ name: MeTTaLog CI
 
 on:
   push:
-    branches: [ref/mettalog]
+    branches: [workflow/test]
   pull_request:
-    branches: [ref/mettalog]
+    branches: [workflow/test]
 
 jobs:
   mettalog-test:
