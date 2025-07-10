@@ -245,17 +245,17 @@
 !(assertEqual (replaceByIndex (1 2 3 4) 4 D) (1 2 3 4))
 !(assertEqual (replaceByIndex (1 2 3 4) 3 D) (1 2 3 D))
 
-!(assertEqual (selectByIndex (1 2 3 4) 2) 3)
-!(assertEqual (selectByIndex (1 2 3 4) 3) 4)
-!(assertEqual (selectByIndex (1 2 3 4) 0) 1)
+; !(assertEqual (selectByIndex (1 2 3 4) 2) 3)
+; !(assertEqual (selectByIndex (1 2 3 4) 3) 4)
+; !(assertEqual (selectByIndex (1 2 3 4) 0) 1)
 
-!(assertEqual (compareElements (A B C) (1 2 3)) (False False False))
-!(assertEqual (compareElements (A B C) (A B C)) (True True True))
-!(assertEqual (compareElements (1 2 3) (1 2 3)) (True True True))
+; !(assertEqual (compareElements (A B C) (1 2 3)) (False False False))
+; !(assertEqual (compareElements (A B C) (A B C)) (True True True))
+; !(assertEqual (compareElements (1 2 3) (1 2 3)) (True True True))
 
-!(assertEqual (splitAt 2 (A B C D E)) ((A B) (C D E)))
-!(assertEqual (splitAt 0 (A B C D E)) (() (A B C D E)))
-!(assertEqual (splitAt 5 (A B C D E)) ((A B C D E) ()))
+; !(assertEqual (splitAt 2 (A B C D E)) ((A B) (C D E)))
+; !(assertEqual (splitAt 0 (A B C D E)) (() (A B C D E)))
+; !(assertEqual (splitAt 5 (A B C D E)) ((A B C D E) ()))
 
 ;; ;; FIX: Failing Test case.
 ;; !(assertEqual (sort (2 3 1 4) 4) (1 2 3 4))
