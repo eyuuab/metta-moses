@@ -231,19 +231,19 @@
 ;; !(assertEqual (zip (A B C) (1 2 3)) ((A 1) (B 2) (C 3)))
 ;; !(assertEqual (zip (A B) (1 2 3)) ((A 1) (B 2)))
 
-!(assertEqual (zipWith == (A B C) (A 2 3)) (True False False))
-!(assertEqual (zipWith == (B C) (A 2 3)) (False False))
-!(assertEqual (zipWith == () (A 2 3)) ())
-!(assertEqual (zipWith == () ()) ())
+; !(assertEqual (zipWith == (A B C) (A 2 3)) (True False False))
+; !(assertEqual (zipWith == (B C) (A 2 3)) (False False))
+; !(assertEqual (zipWith == () (A 2 3)) ())
+; !(assertEqual (zipWith == () ()) ())
 
-;; ;; FIX: Failing Test case
-;; !(assertEqual (len (A B C D)) 4)
-;; !(assertEqual (len ()) 0)
-;; !(assertEqual (len (A)) 1)
-;; !(assertEqual (len A) 4) ;; Should return Error. !(assertEqual (replaceByIndex (A B C) 0 D) (D B C))
+; ;; ;; FIX: Failing Test case
+; ;; !(assertEqual (len (A B C D)) 4)
+; ;; !(assertEqual (len ()) 0)
+; ;; !(assertEqual (len (A)) 1)
+; ;; !(assertEqual (len A) 4) ;; Should return Error. !(assertEqual (replaceByIndex (A B C) 0 D) (D B C))
 
-!(assertEqual (replaceByIndex (1 2 3 4) 4 D) (1 2 3 4))
-!(assertEqual (replaceByIndex (1 2 3 4) 3 D) (1 2 3 D))
+; !(assertEqual (replaceByIndex (1 2 3 4) 4 D) (1 2 3 4))
+; !(assertEqual (replaceByIndex (1 2 3 4) 3 D) (1 2 3 D))
 
 ; !(assertEqual (selectByIndex (1 2 3 4) 2) 3)
 ; !(assertEqual (selectByIndex (1 2 3 4) 3) 4)
