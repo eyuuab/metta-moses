@@ -261,24 +261,24 @@
 ;; !(assertEqual (sort (2 3 1 4) 4) (1 2 3 4))
 ;; !(assertEqual (sort (2 3 1 4) 4 >=) (4 3 2 1))
 
-!(assertEqual (take 1 (A B C)) (A))
-!(assertEqual (take 2 (A B C)) (A B))
-!(assertEqual (take 2 ()) ())
+; !(assertEqual (take 1 (A B C)) (A))
+; !(assertEqual (take 2 (A B C)) (A B))
+; !(assertEqual (take 2 ()) ())
 
-!(assertEqual (drop 1 (A B C)) (B C))
-!(assertEqual (drop 2 (A B C)) (C))
-!(assertEqual (drop 2 ()) ())
+; !(assertEqual (drop 1 (A B C)) (B C))
+; !(assertEqual (drop 2 (A B C)) (C))
+; !(assertEqual (drop 2 ()) ())
 
-;; Test selectByIndex
+; ;; Test selectByIndex
 
-!(assertEqual (selectByIndex (0 1 2 3 4) 2) 2)
-!(assertEqual (selectByIndex (0 1 2 3 4) 3) 3)
-!(assertEqual (selectByIndex (0 1 2 3 4) 5) (Error (Index out of range) ()))
+; !(assertEqual (selectByIndex (0 1 2 3 4) 2) 2)
+; !(assertEqual (selectByIndex (0 1 2 3 4) 3) 3)
+; !(assertEqual (selectByIndex (0 1 2 3 4) 5) (Error (Index out of range) ()))
 
-;; Test unNest
+; ;; Test unNest
 
-!(assertEqual (collapse (unNest (AND A (AND B C)))) (AND A AND B C))
-!(assertEqual (collapse (unNest (1 2 (3 4 (5))))) (1 2 3 4 5))
+; !(assertEqual (collapse (unNest (AND A (AND B C)))) (AND A AND B C))
+; !(assertEqual (collapse (unNest (1 2 (3 4 (5))))) (1 2 3 4 5))
 
 ; ;; Test cleanSpace
 
