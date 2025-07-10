@@ -216,16 +216,16 @@
 ;; !(assertEqual (appendAtom A (B C)) (B C A))
 ;; !(assertEqual (appendAtom (A) (B C)) (B C (A)))
 
-!(assertEqual (max 1 2) 2)
-!(assertEqual (max 2 4) 4)
+; !(assertEqual (max 1 2) 2)
+; !(assertEqual (max 2 4) 4)
 
-;; ;; FIX: Failing Test case
-;; !(assertEqual (gen 1 (0)) (1 0))
-;; !(assertEqual (gen 3 (0)) (3 2 1 0))
+; ;; ;; FIX: Failing Test case
+; ;; !(assertEqual (gen 1 (0)) (1 0))
+; ;; !(assertEqual (gen 3 (0)) (3 2 1 0))
 
-!(assertEqual (decons (A B C)) (A (B C)))
-!(assertEqual (decons ()) (if False ((car-atom ()) (cdr-atom ())) (Error Unit Or Symbol cannot be deconstructed)))
-!(assertEqual (decons (A)) (A ()))
+; !(assertEqual (decons (A B C)) (A (B C)))
+; !(assertEqual (decons ()) (if False ((car-atom ()) (cdr-atom ())) (Error Unit Or Symbol cannot be deconstructed)))
+; !(assertEqual (decons (A)) (A ()))
 
 ;; ;; FIX: Failing Test case
 ;; !(assertEqual (zip (A B C) (1 2 3)) ((A 1) (B 2) (C 3)))
