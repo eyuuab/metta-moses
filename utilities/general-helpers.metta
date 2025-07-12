@@ -4,9 +4,9 @@
 (= (~= $a $b) (not (== $a $b)))
 
 ! (bind! numStr (py-atom str))
- ! (bind! rnd (py-atom random))
-! ((py-dot rnd seed) 0)
-! ((py-dot rnd randint) 1 6)
+;  ! (bind! rnd (py-atom random))
+; ! ((py-dot rnd seed) 0)
+; ! ((py-dot rnd randint) 1 6)
 
 
 ;; INFO: Uncomment for the use of MeTTaLog.
