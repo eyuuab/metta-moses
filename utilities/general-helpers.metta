@@ -3,6 +3,9 @@
 (: ~= (-> Atom Atom Bool))
 (= (~= $a $b) (not (== $a $b)))
 
+! ! (bind! np (py-atom numpy))
+! ((py-dot np abs) -5)
+
 ;; INFO: Uncomment for the use of MeTTaLog.
 (: >= (-> Number Number Bool))
 (= (>= $a $b) (or (== $a $b) (> $a $b)))
