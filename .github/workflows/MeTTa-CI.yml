@@ -19,27 +19,28 @@ jobs:
         with:
           python-version: '3.12.3'
 
-      - name: Upgrade pip and install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install numpy pyswip janus ansi2html junit2html janus-swi
-
-      - name: Install system build tools and Python headers
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3.12-dev build-essential
-
-      - name: Install SWI-Prolog from PPA
+      - name: Install SWI-Prolog, dev headers, and build tools
         run: |
           sudo apt-get remove -y swi-prolog* || true
           sudo apt-get update
           sudo apt-add-repository ppa:swi-prolog/stable -y
           sudo apt-get update
-          sudo apt-get install -y swi-prolog
+          sudo apt-get install -y \
+            swi-prolog \
+            swi-prolog-dev \
+            python3.12-dev \
+            build-essential
+
+      - name: Upgrade pip and install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pyswip janus ansi2html junit2html
+          # Now that SWI-Prolog and dev headers are present, install the Janus-SWI binding
+          pip install janus-swi
 
       - name: Install MeTTaLog (runs INSTALL.sh)
         run: |
-          # 1) Clone into $HOME so INSTALL.sh installs here
+          # 1) Clone into $HOME for installation
           git clone https://github.com/trueagi-io/metta-wam.git --depth 1 $HOME/metta-wam
           cd $HOME/metta-wam
 
@@ -47,15 +48,15 @@ jobs:
           chmod +x ./INSTALL.sh
           bash -c "source ./INSTALL.sh --allow-system-modifications"
 
-          # 3) Add the real install location to PATH
+          # 3) Add MeTTaLog binaries to PATH
           echo "/home/runner/metta-wam"       >> $GITHUB_PATH
           echo "/home/runner/metta-wam/venv/bin" >> $GITHUB_PATH
 
-          # 4) Preserve any other needed environment variables
+          # 4) Preserve any needed environment variables
           echo "SWIPL_BOOT_FLAGS=--no-pce"        >> $GITHUB_ENV
           echo "METTALOG_DIR=/home/runner/metta-wam" >> $GITHUB_ENV
 
-      - name: Debug mettalog installation
+      - name: Debug MeTTaLog installation
         run: |
           echo "PATH is: $PATH"
           which mettalog
