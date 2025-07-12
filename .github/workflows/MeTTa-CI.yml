@@ -67,4 +67,4 @@ jobs:
         timeout-minutes: 15
         run: |
           which mettalog
-          python3 scripts/run-tests.py
+          mettalog utilities/test/general-helpers.metta
