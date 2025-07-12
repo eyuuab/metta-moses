@@ -11,77 +11,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Set up Python 3.12
+      - name: Use Python 3.11
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12.3'
+          python-version: '3.11'
 
-      - name: Upgrade pip and install Python dependencies
+      - name: Upgrade pip & install deps
         run: |
           python -m pip install --upgrade pip
           pip install numpy pyswip janus ansi2html junit2html
-          # Additional packages for py-atom support
-          pip install cffi pycparser
 
-      - name: Install SWI-Prolog from PPA
+      - name: Install SWI-Prolog + Python embed
         run: |
-          sudo apt-get remove -y swi-prolog* || true
           sudo apt-get update
-          sudo apt-add-repository ppa:swi-prolog/stable -y
-          sudo apt-get update
-          sudo apt-get install -y swi-prolog
+          sudo apt-get install -y swi-prolog-nox \
+                                  python3.11 python3.11-dev libpython3.11
 
-      - name: Install MeTTaLog (runs INSTALL.sh)
+      - name: Install MeTTaLog
         run: |
-          # 1) Clone into $HOME so INSTALL.sh installs here
           git clone https://github.com/trueagi-io/metta-wam.git --depth 1 $HOME/metta-wam
-          cd $HOME/metta-wam
+          bash -c "source $HOME/metta-wam/INSTALL.sh --allow-system-modifications"
+          echo "$HOME/metta-wam"            >> $GITHUB_PATH
+          echo "$HOME/metta-wam/venv/bin"   >> $GITHUB_PATH
+          echo "SWIPL_BOOT_FLAGS=--no-pce"  >> $GITHUB_ENV
+          echo "METTALOG_DIR=$HOME/metta-wam" >> $GITHUB_ENV
 
-          # 2) Run the installer
-          chmod +x ./INSTALL.sh
-          bash -c "source ./INSTALL.sh --allow-system-modifications"
-
-          # 3) Add the real install location to PATH
-          echo "/home/runner/metta-wam"       >> $GITHUB_PATH
-          echo "/home/runner/metta-wam/venv/bin" >> $GITHUB_PATH
-
-          # 4) Enhanced environment variables for Python integration
-          echo "SWIPL_BOOT_FLAGS=--no-pce --no-tty"        >> $GITHUB_ENV
-          echo "METTALOG_DIR=/home/runner/metta-wam" >> $GITHUB_ENV
-          echo "PYTHONUNBUFFERED=1"              >> $GITHUB_ENV
-          echo "PYTHONIOENCODING=utf-8"          >> $GITHUB_ENV
-          echo "SWIPLVERSION=$(swipl --version | head -1)" >> $GITHUB_ENV
-
-      - name: Debug mettalog installation
+      - name: Verify Python embed in SWI-Prolog
         run: |
-          echo "PATH is: $PATH"
-          echo "Python version: $(python3 --version)"
-          echo "SWI-Prolog version: $(swipl --version | head -1)"
-          which mettalog
-          ls -la /home/runner/metta-wam/libraries
-          
-          # Test basic Python integration
-          python3 -c "import numpy; print(f'NumPy version: {numpy.__version__}')"
+          swipl \
+            -g "use_module(library(python)), python_eval('import sys; print(sys.version)')" \
+            -g "halt(0)"
 
-      - name: Run basic MeTTaLog tests (without py-atom)
-        timeout-minutes: 10
-        run: |
-          which mettalog
-          # Run tests excluding py-atom related ones first
-          python3 scripts/run-tests.py --exclude-pattern "*py-atom*"
-
-      - name: Run py-atom specific tests
-        timeout-minutes: 5
-        continue-on-error: true  # Don't fail the whole job if py-atom tests timeout
-        run: |
-          # Run only py-atom related tests with shorter timeout
-          python3 scripts/run-tests.py --include-pattern "*py-atom*" --timeout 30
-
-      - name: Run all remaining tests
-        timeout-minutes: 15
-        run: |
-          # Run all tests if the above didn't cover everything
-          python3 scripts/run-tests.py
+      - name: Run MeTTaLog tests
+        run: python3 scripts/run-tests.py
