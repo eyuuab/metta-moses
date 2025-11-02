@@ -194,3 +194,78 @@
  (List.concat $leftOld $newInstSet)
 )
 )
+
+
+; The main optimization loop for univariate evolutionary search.
+; Performs selection, probability model learning, sampling, scoring, and replacement per generation.
+; Recursively iterates until the generation limit or best score is reached.
+; Params:
+;   $sortedSInstSet – current sorted population (best first)
+;   $genCount – current generation number
+;   $maxGensTotal – maximum number of generations allowed
+;   $nSelect – number of individuals to select for model learning
+;   $nGenerate – number of new instances to generate each generation
+;   $bestPossibleCscore – ideal (target) best possible score
+;   $bestCscore  – current best score in the population
+;   $rep – representation object 
+;   $itable – input table
+;   $complexityRatio – complexity ratio
+; Returns: The final optimized and sorted instance set after completing all generations.
+; (: univariateMainLoop (-> (InstanceSet $score) Number Number Number Number Cscore Cscore Representation (ITable $a) Number (InstanceSet $score)))
+(= (univariateMainLoop $sortedSInstSet $genCount $maxGensTotal $nSelect $nGenerate $bestPossibleCscore $bestCscore $rep $itable $complexityRatio)
+(if (and (< $genCount $maxGensTotal) (apply < $bestCscore $bestPossibleCscore))
+(let*
+  (
+    (() (println! "~~~~Generation~~~~" $genCount))
+    ($selectedInsts (tournamentSelection $sortedSInstSet 2 $nSelect Nil))
+    (() (println! "Selected Best Instances: " $selectedInsts))
+    ($instsExp (sInstsToExp $selectedInsts ()))
+    (() (println! "Selected Instances as Expressions: " $instsExp))
+    ($noInsts (size-atom $instsExp))
+    (() (println! "Number of Selected Instances: " $noInsts))
+    ($instLength (size-atom (car-atom (index-atom $instsExp 0))))
+    (() (println! "Instance Length (Number of Knobs): " $instLength))
+    ($fieldVals (instsToFieldValues $instsExp $instLength $noInsts 0 ()))
+    (() (println! "Field Values for Each Knob: " $fieldVals))
+    ($probabilityModel (learnProbability $fieldVals ()))
+    (() (println! "Probability Model: " $probabilityModel))
+    (($count0 $count1 $count2) (car-atom $probabilityModel))
+    ($tot (+ $count0 (+ $count1 $count2)))
+    ($generatedInsts (sampleInsts $probabilityModel $nGenerate $tot ()))
+    (() (println! "Generated New Instances: " $generatedInsts))
+    ($generatedSInstSet (exprToSInstSet $generatedInsts))
+    ($scoredGeneratedInstSet (transform $generatedSInstSet $rep $itable $complexityRatio))
+    (() (println! "Scored Generated New Instances: " $scoredGeneratedInstSet))
+    ($finalInstSet (replaceTheWorst $sortedSInstSet $scoredGeneratedInstSet))
+    (() (println! "Replaced Worst Instances: " $finalInstSet))
+    ((mkSInstSet $sortedFinalInstSet) (sortDeme (mkSInstSet $finalInstSet)))
+    (() (println! "Sorted Final Instance Set: " $sortedFinalInstSet))
+    ($bestCurrentScore (getSInstScore (List.getByIdx $sortedFinalInstSet 0)))
+  )
+  (univariateMainLoop (mkSInstSet $sortedFinalInstSet) (+ $genCount 1) $maxGensTotal $nSelect $nGenerate $bestPossibleCscore $bestCurrentScore $rep $itable $complexityRatio)
+)
+$sortedSInstSet
+))
+
+; Performs the optimization phase for a given deme (population).
+; Params:
+;   (mkDeme $rep $instSet $id) – the deme to optimize
+;   $itable – input table
+;   $complexityRatio – complexity ratio
+;   $nSelect – number of individuals to select per generation
+;   $nGenerate – number of new instances to generate per generation
+;   $maxGensTotal – maximum number of generations to run
+;   $bestPossibleCscore – ideal (target) best score
+;   $bestCscore – current best score (initially worst)
+; Returns: A new deme containing the optimized and sorted instance set.
+; (: univariateOptimize (-> Deme (ITable $a) Number Number Number Number Cscore Cscore Deme))
+(= (univariateOptimize (mkDeme $rep $instSet $id) $itable $complexityRatio $nSelect $nGenerate $maxGensTotal $bestPossibleCscore $bestCscore)
+(let*
+   (
+    ($sInstSet (transform $instSet $rep $itable $complexityRatio))
+    (() (println! "Scored Randomly Generated Population: " $sInstSet))
+    ($sortedSInstSet (sortDeme $sInstSet))
+    (() (println! "Sorted Scored Randomly Generated Population: " $sortedSInstSet))
+    ($finalInstSet (univariateMainLoop $sortedSInstSet 0 $maxGensTotal $nSelect $nGenerate $bestPossibleCscore $bestCscore $rep $itable $complexityRatio))
+   )
+   (mkDeme $rep $finalInstSet $id)))
