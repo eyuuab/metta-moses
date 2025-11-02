@@ -175,3 +175,22 @@
     (let $sampledInst (sample $probabilityModel $tot ())
          (sampleInsts $probabilityModel (- $nGenerate 1) $tot (cons-atom ($sampledInst (worstCscore)) $acc))
 )))
+
+
+; Replaces the worst-performing instances in the old population with newly generated ones.
+; Keeps the top (oldLength - newLength) individuals from the old set and appends the new set.
+; Params:
+;   $oldInstSet – the current sorted population (best to worst)
+;   $newInstSet – the newly generated and scored instances
+; Returns: A combined instance set where the worst individuals are replaced by the new ones.
+; (: replaceTheWorst (-> (InstanceSet $score) (InstanceSet $score) Expression))
+(= (replaceTheWorst (mkSInstSet $oldInstSet) (mkSInstSet $newInstSet))
+(let* (
+  ($newLength (List.length $newInstSet))
+  ($oldLength (List.length $oldInstSet))
+  ($toTakeFromOld (- $oldLength $newLength))
+  ($leftOld (List.takeN $toTakeFromOld $oldInstSet))
+)
+ (List.concat $leftOld $newInstSet)
+)
+)
