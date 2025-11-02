@@ -1,3 +1,24 @@
+;; =====================================================================
+;;               Univariate Optimization Algorithm
+;; =====================================================================
+;;
+;;  This implementation performs probabilistic, univariate optimization 
+;;  inspired by Estimation of Distribution Algorithms (EDA) used in MOSES.
+;;  It evolves a population of candidate solutions by learning a simple 
+;;  probability model from the best-performing instances and generating 
+;;  new ones based on this learned distribution.
+;;
+;;  The main workflow:
+;;    1. Initialize a random population of instances.
+;;    2. Evaluate and score each instance using a fitness function.
+;;    3. Select the top-performing instances (tournament selection).
+;;    4. Learn a univariate probability model from selected instances.
+;;    5. Sample new instances using this probability model (Roulette-Wheel selection.).
+;;    6. Replace the worst-performing old instances with new ones.
+;;    7. Repeat until convergence or the maximum generation limit is reached.
+;;
+;; =====================================================================
+
 ; Generates an initial population (list of scored instances).
 ; Each instance has a random structure and is assigned the worst initial score.
 ; Params:
