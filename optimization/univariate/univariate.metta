@@ -75,3 +75,25 @@
        )
    )
 )
+
+; Collects field values for all knob indices across all instances.
+; Calls getNthInstFields for each knob position and accumulates the results.
+; Params:
+;   $instsExp — list of instance expressions ((inst score) ...).
+;   $instLength — number of knobs (fields) per instance.
+;   $noInsts — total number of instances.
+;   $n — current knob index (loop counter).
+;   $acc — accumulator for tuples of field values.
+; Returns: List of lists, where each sublist contains all values for one knob position.
+(: instsToFieldValues (-> Expression Number Number Number Expression Expression))
+(= (instsToFieldValues $instsExp $instLength $noInsts $n $acc)
+     (if (== $n $instLength)
+         $acc
+         (let* (
+             ($nthFields (getNthInstFields $instsExp $noInsts 0 $n ()))
+             ($rest (instsToFieldValues $instsExp $instLength $noInsts (+ $n 1) $acc))
+           )
+           (cons-atom $nthFields $rest)
+         )
+     )
+)
