@@ -1159,7 +1159,7 @@
 ;   $n — value to count.
 ;   $ctr — running count (initially 0).
 ; Returns: Number of occurrences of $n in $tuple.
-(: countN (-> Expression Number Number Number))
+; (: countN (-> Expression Number Number Number))
 (= (countN $tuple $n $ctr)
 (if (== $tuple ()) $ctr
 (if (== (car-atom $tuple) $n) 
@@ -1170,6 +1170,6 @@
 ; Custom implementation of the ceiling function
 ; Param: $num – the input number (may be fractional)
 ; Returns: The smallest integer greater than or equal to $num.
-(: ceilMath (-> Number Number))
+; (: ceilMath (-> Number Number))
 (= (ceilMath $num)
 (+ (floor-math $num) (if (> $num (floor-math $num)) 1 0)))

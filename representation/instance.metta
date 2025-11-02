@@ -206,7 +206,7 @@
 ;   $sInsts — list of scored instances.
 ;   $acc — accumulator (initially Nil).
 ; Returns: List of instance expressions ((inst score) ...).
-(: sInstsToExp (-> List Expression Expression))
+; (: sInstsToExp (-> (List $a) Expression Expression))
 (= (sInstsToExp $sInsts $acc)
 (if (== $sInsts Nil) $acc
 (let* 
