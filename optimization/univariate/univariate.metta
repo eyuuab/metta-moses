@@ -119,3 +119,22 @@
        )
    )
 )
+
+; Selects one field value (0, 1, or 2) using roulette-wheel selection.
+; The selection is proportional to the frequency of each field value.
+; Params:
+;   $fieldCount — tuple of counts (count0, count1, count2) for one knob.
+;   $tot — total sum of all counts (used to scale random selection).
+;   $ctr — index counter (initially 0).
+; Returns: The selected field index (0, 1, or 2).
+; (: roulette_select (-> Expression Number Number Number))
+(= (roulette_select $fieldCount $tot $ctr)
+(if (== $fieldCount ()) (- $ctr 1)
+(let*
+  (
+    ($rndfloat (randomFloat))
+    ($ajstdSum (* $tot $rndfloat))
+  )
+  (if (<= (- $ajstdSum (car-atom $fieldCount)) 0) $ctr
+      (roulette_select (cdr-atom $fieldCount) $tot (+ $ctr 1)))
+)))
