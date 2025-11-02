@@ -200,3 +200,18 @@
        Nil
        (Cons (biasedRandomInt) (generateRandomInstance (- $instLength 1)))))
 
+; Converts a list of scored instances (mkSInst) into a list of expressions.
+; Each scored instance is transformed using sInstToExpr and accumulated.
+; Params:
+;   $sInsts — list of scored instances.
+;   $acc — accumulator (initially Nil).
+; Returns: List of instance expressions ((inst score) ...).
+(: sInstsToExp (-> List Expression Expression))
+(= (sInstsToExp $sInsts $acc)
+(if (== $sInsts Nil) $acc
+(let* 
+  (
+    ((Cons $scoredInst $rest) $sInsts)
+    ($instExp (sInstToExpr $scoredInst))
+  )
+  (sInstsToExp $rest (cons-atom $instExp $acc)))))

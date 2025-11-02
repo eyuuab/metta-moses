@@ -67,3 +67,7 @@
 !(assertEqual (instance>= (mkSInst (mkPair (mkInst Nil) (mkCscore -2.0 2 1.0 0.5 -3.5))) (mkSInst (mkPair (mkInst Nil) (mkCscore -1.0 4 1.0 0.5 -2.5)))) False)
 ! (assertEqual (instance>= (mkSInst (mkPair (mkInst Nil) (mkCscore -2.0 2 1.0 0.5 -3.5)))
                         (mkSInst (mkPair (mkInst Nil) (mkCscore -2.0 3 2.0 0.5 -4.5) ))) True) 
+
+!(assertEqual 
+    (sInstsToExp (Cons (mkSInst (mkPair (mkInst (Cons 2 (Cons 0 Nil))) (mkCscore -3 1 0.5 0.0 -3.5))) (Cons (mkSInst (mkPair (mkInst (Cons 0 (Cons 1 Nil))) (mkCscore -1 1 0.5 0.0 -1.5))) Nil)) ())
+    (((0 1) (-1 1 0.5 0.0 -1.5)) cons-atom ((2 0) (-3 1 0.5 0.0 -3.5)) ()))
