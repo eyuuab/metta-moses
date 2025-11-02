@@ -1166,3 +1166,10 @@
     (countN (cdr-atom $tuple) $n (+ $ctr 1)) 
     (countN (cdr-atom $tuple) $n $ctr)
 )))
+
+; Custom implementation of the ceiling function
+; Param: $num – the input number (may be fractional)
+; Returns: The smallest integer greater than or equal to $num.
+(: ceilMath (-> Number Number))
+(= (ceilMath $num)
+(+ (floor-math $num) (if (> $num (floor-math $num)) 1 0)))
