@@ -269,3 +269,31 @@ $sortedSInstSet
     ($finalInstSet (univariateMainLoop $sortedSInstSet 0 $maxGensTotal $nSelect $nGenerate $bestPossibleCscore $bestCscore $rep $itable $complexityRatio))
    )
    (mkDeme $rep $finalInstSet $id)))
+
+;; Initializes and starts the univariate optimization process.
+;; Computes generation and population parameters, creates a random initial population,
+;; and calls the univariate optimizer to evolve the population.
+;; Params:
+;;   (mkDeme ...) – initial deme
+;;   $itable – input table
+;;   $complexityRatio – complexity ratio
+;;   $popSizeRatio – ratio to determine population size
+;;   $selectionRatio – ratio of individuals to select each generation
+;;   $replacementRatio – ratio of individuals to replace each generation
+;;   $bestPossibleCscore  – target best possible score
+;; Returns:
+;;   A deme evolved through univariate optimization with the best-found instances.
+; (: univariate (-> Deme (ITable $a) Number Number Number Number Cscore Deme))
+(= (univariate (mkDeme (mkRep (mkKbMap (mkDscKbMp $idxMp) (mkDscMp $disc)) $tree) (mkSInstSet $instSet) $id) $itable $complexityRatio $popSizeRatio $selectionRatio $replacementRatio $bestPossibleCscore)
+(let* (
+        ($maxGensTotal (informationTheoreticBits $disc))
+        ($popSize (ceilMath (* $popSizeRatio (pow-math $maxGensTotal 1.05))))
+        ($nSelect (floor-math (* $selectionRatio $popSize)))
+        ($nGenerate (floor-math (* $replacementRatio $popSize)))
+        ($randPopDeme (mkDeme (mkRep (mkKbMap (mkDscKbMp $idxMp) (mkDscMp $disc)) $tree) (mkSInstSet (generateInitialSample (Map.length $idxMp) $popSize)) $id))  
+        (() (println! "Randomly Populated Deme: " $randPopDeme))
+      ) 
+      (univariateOptimize $randPopDeme $itable $complexityRatio $nSelect $nGenerate $maxGensTotal $bestPossibleCscore (worstCscore))))
+
+
+
