@@ -138,3 +138,25 @@
   (if (<= (- $ajstdSum (car-atom $fieldCount)) 0) $ctr
       (roulette_select (cdr-atom $fieldCount) $tot (+ $ctr 1)))
 )))
+
+; Samples a single instance based on the learned probability model.
+; For each knob, selects one value using roulette selection.
+; Params:
+;   $probabilityModel — list of tuples [(count0, count1, count2), ...]
+;                            representing each knob’s distribution.
+;   $tot — total count sum for normalization in roulette selection.
+;   $acc — accumulator for the selected field values.
+; Returns: A list representing one sampled instance (e.g., (2 0 1)).
+; (: sample (-> Expression Number Expression Expression))
+(= (sample $probabilityModel $tot $acc)
+   (if (== $probabilityModel ())
+       $acc
+       (let* (
+           ($fieldCount (car-atom $probabilityModel))
+           ($selectedFieldVal (roulette_select $fieldCount $tot 0))
+           ($rest (sample (cdr-atom $probabilityModel) $tot $acc))
+         )
+         (cons-atom $selectedFieldVal $rest)
+       )
+   )
+)
