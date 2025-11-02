@@ -97,3 +97,25 @@
          )
      )
 )
+
+; Learns the frequency of each possible field value (0, 1, 2) for every knob (field) across all instances.
+; Used later to derive probability-based sampling distributions.
+; Params:
+;   $fieldVals — list of tuples; each tuple contains all field values for one knob index across all instances.
+;   $acc — accumulator for probability counts.
+; Returns: List of tuples (count0, count1, count2) for each field position.
+; (: learnProbability (-> Expression Expression Expression))
+(= (learnProbability $fieldVals $acc)
+   (if (== $fieldVals ())
+       $acc
+       (let* (
+           ($fieldVal (car-atom $fieldVals))
+           ($count0 (countN $fieldVal 0 0))
+           ($count1 (countN $fieldVal 1 0))
+           ($count2 (countN $fieldVal 2 0))
+           ($rest (learnProbability (cdr-atom $fieldVals) $acc))
+         )
+         (cons-atom ($count0 $count1 $count2) $rest)
+       )
+   )
+)
