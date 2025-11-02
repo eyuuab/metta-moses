@@ -3,17 +3,7 @@
 (: NilMap (Map ($k $v)))
 (: ConsMap (-> ($k $v) (Map ($k $v)) (Map ($k $v))))
 
-;; insert an element to a Map
-(: Map.insert (-> ($k $v) (Map ($k $v)) (Map ($k $v))))
-(= (Map.insert ($key $value) NilMap) (ConsMap ($key $value) NilMap))
-(= (Map.insert ($key $value) (ConsMap ($curKey $curVal) $tail))
-    (if (== $key $curKey)  (ConsMap ($key $value) $tail)
-        (if (< $key $curKey)
-            (ConsMap ($key $value) (ConsMap ($curKey $curVal) $tail))
-            (ConsMap ($curKey $curVal) (Map.insert ($key $value) $tail)))))
-
 ;; An insertion function that also allows map to act as a counter
-
 (: Map.insertCounter (-> $k (Map ($k $v)) (Map ($k $v))))
 (= (Map.insertCounter $key NilMap) (ConsMap ($key 1) NilMap))
 (= (Map.insertCounter $key (ConsMap ($curKey $curVal) $tail))
@@ -31,6 +21,15 @@
         (if ($fLt $key $curKey)
             (ConsMap ($key $value) (ConsMap ($curKey $curVal) $tail))
             (ConsMap ($curKey $curVal) (Map.insert ($key $value) $tail $fEq $fLt)))))
+
+;; insert an element to a Map
+(: Map.insert (-> ($k $v) (Map ($k $v)) (Map ($k $v))))
+(= (Map.insert ($key $value) NilMap) (ConsMap ($key $value) NilMap))
+(= (Map.insert ($key $value) (ConsMap ($curKey $curVal) $tail))
+    (if (== $key $curKey)  (ConsMap ($key $value) $tail)
+        (if (< $key $curKey)
+            (ConsMap ($key $value) (ConsMap ($curKey $curVal) $tail))
+            (ConsMap ($curKey $curVal) (Map.insert ($key $value) $tail)))))
 
 ;; Get a value from a Map using key
 (: Map.getByKey (-> $k (Map ($k $v)) $v))
@@ -98,6 +97,3 @@
                       (if (== $targetIdx -1)
                           $targetIdx
                           (+ 1 $targetIdx)))))
-
-!(Map.find (ConsMap ((0) 1) (ConsMap ((1) 2) (ConsMap ((2) 3) NilMap))) (2) )
-!(Map.getByIdx (ConsMap ((0) 1) (ConsMap ((1) 2) (ConsMap ((2) 3) NilMap))) 1)
