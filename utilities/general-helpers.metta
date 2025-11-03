@@ -1148,24 +1148,9 @@
 ; ~50% chance to return 0, otherwise randomly 1 or 2.
 (: biasedRandomInt (-> Number))
 (= (biasedRandomInt)
-   (if (< (random-int 0 2) 1)  ; 50% chance
+   (if (== (random-int 0 2) 0)  ; 50% chance
        0
        (random-int 1 3)))      ; 1 or 2
-
-; Counts how many times a given value appears in a tuple.
-; Recursively traverses the tuple and increments the counter when a match is found.
-; Params:
-;   $tuple — list or tuple of values to search.
-;   $n — value to count.
-;   $ctr — running count (initially 0).
-; Returns: Number of occurrences of $n in $tuple.
-; (: countN (-> Expression Number Number Number))
-(= (countN $tuple $n $ctr)
-(if (== $tuple ()) $ctr
-(if (== (car-atom $tuple) $n) 
-    (countN (cdr-atom $tuple) $n (+ $ctr 1)) 
-    (countN (cdr-atom $tuple) $n $ctr)
-)))
 
 ; Custom implementation of the ceiling function
 ; Param: $num – the input number (may be fractional)
