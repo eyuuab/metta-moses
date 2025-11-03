@@ -70,4 +70,5 @@
 
 !(assertEqual 
     (sInstsToExp (Cons (mkSInst (mkPair (mkInst (Cons 2 (Cons 0 Nil))) (mkCscore -3 1 0.5 0.0 -3.5))) (Cons (mkSInst (mkPair (mkInst (Cons 0 (Cons 1 Nil))) (mkCscore -1 1 0.5 0.0 -1.5))) Nil)) ())
-    (((0 1) (-1 1 0.5 0.0 -1.5)) cons-atom ((2 0) (-3 1 0.5 0.0 -3.5)) ()))
+    (((0 1) (-1 1 0.5 0.0 -1.5)) ((2 0) (-3 1 0.5 0.0 -3.5))))
+    
