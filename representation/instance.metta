@@ -207,11 +207,7 @@
 ;   $acc — accumulator (initially Nil).
 ; Returns: List of instance expressions ((inst score) ...).
 ; (: sInstsToExp (-> (List $a) Expression Expression))
-(= (sInstsToExp $sInsts $acc)
-(if (== $sInsts Nil) $acc
-(let* 
-  (
-    ((Cons $scoredInst $rest) $sInsts)
-    ($instExp (sInstToExpr $scoredInst))
-  )
-  (sInstsToExp $rest (cons-atom $instExp $acc)))))
+(= (sInstsToExp Nil $acc) $acc)
+(= (sInstsToExp (Cons $scoredInst $rest) $acc)
+(let $instExp (sInstToExpr $scoredInst)
+     (sInstsToExp $rest (cons-atom $instExp $acc))))
