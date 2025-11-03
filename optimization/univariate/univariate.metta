@@ -131,15 +131,27 @@
        $acc
        (let* (
            ($fieldVal (car-atom $fieldVals))
-           ($count0 (countN $fieldVal 0 0))
-           ($count1 (countN $fieldVal 1 0))
-           ($count2 (countN $fieldVal 2 0))
+           ($count0 (count 0 $fieldVal))
+           ($count1 (count 1 $fieldVal))
+           ($count2 (count 2 $fieldVal))
            ($rest (learnProbability (cdr-atom $fieldVals) $acc))
          )
          (cons-atom ($count0 $count1 $count2) $rest)
        )
    )
 )
+;; Helper function for roulette-wheel selection.
+;; Recursively checks cumulative counts to find the selected field index.
+;; Params:
+;;   $fieldCount — tuple of counts (count0, count1, count2) for one knob.
+;;   $ctr — index counter (initially 0).
+;;   $ajstdSum — adjusted random sum for selection.
+;; Returns: The selected field index (0, 1, or 2).
+; (: roulette_helper (-> Expression Number Number Number))
+(= (roulette_helper $fieldCount $ctr $ajstdSum)
+(if (== $fieldCount ()) (- $ctr 1)
+(if (<= (- $ajstdSum (car-atom $fieldCount)) 0) $ctr
+      (roulette_helper (cdr-atom $fieldCount) (+ $ctr 1) (- $ajstdSum (car-atom $fieldCount))))))
 
 ; Selects one field value (0, 1, or 2) using roulette-wheel selection.
 ; The selection is proportional to the frequency of each field value.
@@ -150,15 +162,12 @@
 ; Returns: The selected field index (0, 1, or 2).
 ; (: roulette_select (-> Expression Number Number Number))
 (= (roulette_select $fieldCount $tot $ctr)
-(if (== $fieldCount ()) (- $ctr 1)
 (let*
   (
     ($rndfloat (randomFloat))
-    ($ajstdSum (* $tot $rndfloat))
-  )
-  (if (<= (- $ajstdSum (car-atom $fieldCount)) 0) $ctr
-      (roulette_select (cdr-atom $fieldCount) $tot (+ $ctr 1)))
-)))
+    ($ajstdSum (* $tot $rndfloat)))
+  (roulette_helper $fieldCount $ctr $ajstdSum)
+))
 
 ; Samples a single instance based on the learned probability model.
 ; For each knob, selects one value using roulette selection.
