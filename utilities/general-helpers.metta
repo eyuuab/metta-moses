@@ -1,8 +1,8 @@
 ;; Helper functions that are going to be useful for writing any metta code
 
-;; !(bind! perf_counter (py-atom "time.perf_counter"))
-;; !(bind! round (py-atom "round"))
-;;
+!(bind! perf_counter (py-atom "time.perf_counter"))
+!(bind! round (py-atom "round"))
+
 ;; Measures the average execution time of a given expression over multiple runs.
 ;; Parameters:
 ;;   $expr: The expression to be evaluated and profiled.
@@ -62,14 +62,8 @@
 )
 
 
-;;
-;; (: ~= (-> Atom Atom Bool))
-;; (= (~= $a $b) (not (== $a $b)))
-;;
-;; ;; INFO: Uncomment for the use of MeTTaLog.
-;; (: >= (-> Number Number Bool))
-;; (= (>= $a $b) (or (== $a $b) (> $a $b)))
-;;
+;; (: != (-> Atom Atom Bool)) Fix Type not working in petta
+(= (!= $a $b) (not (== $a $b)))
 ;Function to cocatinate two tuples (A B) (C D) ==> (A B C D)
 ;; (: concatTuple (-> Expression Expression Expression))
  (= (concatTuple $x $y) (collapse (union (superpose $x) (superpose $y)))) ;; FIX: No longer working on version 0.2.3
@@ -96,7 +90,7 @@
 
 ; a helper function to the isConsistentExp function.
 ; a function which checks if an element is member of a tuple.
-(: isMember (-> $a $aa Bool))
+;; (: isMember (-> $a aa Bool)) ;; FIX this Type behaving werid in petta I believe its becuase of superpose/collapse 
 (= (isMember $x $list)
     (not (== (collapse (intersection (superpose ($x)) (superpose $list))) ()))
 )
@@ -146,33 +140,35 @@
 
 ;; A function that behaves like a do while loop.
 ;; It executes the functions in the given list and returns the last result.
-(: until (-> (-> $a Bool) (-> $a $a) $a $a))
+;; (: until (-> (-> $a Bool) (-> $a $a) $a $a))
 (= (until $predicate $function $x) 
     (let* ( 
         ; (() (println! (Inside until with function: $function ...)))
         ($isTrue ($predicate $x))
         ; (() (println! (Predicate result: $isTrue)))
         ; ($x' ($function $x))
-        ($x' (if $isTrue ("Predicate True Skipping Function Application") ($function $x)))
+        ($x' (if (== $isTrue true) ("Predicate True Skipping Function Application") ($function $x)))
         ; (() (println! (Function result: $x')))
     )
-    (if $isTrue
+    (if (== $isTrue true)
         $x
         (until $predicate $function $x'))
     ))
 ;; A foldleft function like the implementation in Haskell.
 ;; It takes a binary function that expects two atoms and
 ;;    apply it recursively on a nested atom.
-(: foldl (-> (-> $a $b $d) $b $c $d))
-(= (foldl $f $acc $tuple)
-   (if (== $tuple ())
-       $acc
-       (let $next (car-atom $tuple) (foldl $f ($f $next $acc) (cdr-atom $tuple)))
-   )
-)
+
+;; this function is commmented out because it creates conflict with built-in foldl-atom
+;; (: foldl (-> (-> $a $b $d) $b $c $d))
+;; (= (foldl $f $acc $tuple)
+;;    (if (== $tuple ())
+;;        $acc
+;;        (let $next (car-atom $tuple) (foldl $f ($f $next $acc) (cdr-atom $tuple)))
+;;    )
+;; )
 
 ;; Fold a tuple from right to left
-(: foldr (-> (-> $a $b $b) $b $c $d))
+;; (: foldr (-> (-> $a $b $b) $b $c $d))
 (= (foldr $f $i $xs)
    (if (== $xs ())
        $i
@@ -182,7 +178,7 @@
          ($f $h $ft))))
 
 ;; Apply a given function to every element of a tuple
-(: map (-> (-> $a $b) $c $d))
+;; (: map (-> (-> $a $b) $c $d))
 (= (map $f $xs)
    (if (== $xs ())
        ()
@@ -200,7 +196,7 @@
 ;; Returns:
 ;;   - Expression: Returns the atom if the predicate evaluates to true, otherwise returns an empty expression.
 (:wrapper (-> (-> $a Bool) $aa $aa))
-(= (wrapper $predicate $x) (if (let $bool ($predicate $x) $bool) $x (empty)))
+(= (wrapper $predicate $x) (if (let $bool ($predicate $x) $bool) $x ()))
 
 ;; Filter function given a predicate ;; FIX: No longer working on version 0.2.3
 (: filter (-> (-> $a Bool) $a $a))
@@ -226,23 +222,25 @@
 (: any (-> Atom Bool))
 (= (any $bools) (isMember True $bools))
 
+;; Fix curry is not working in petta 
 ;; ;; A trick to define `curry` in MeTTa without `lambda`
 ;; (: curry (-> (-> $a $b $c) (-> $a (-> $b $c))))
 ;; (= (((curry $f) $x) $y) ($f $x $y))
 ;;
-;; ;; A trick to define `curry2` in MeTTa without `lambda`
-;; (: curry2 (-> (-> $a $b $c $d) (-> $a (-> $b $c $d))))
+;; ;; ;; A trick to define `curry2` in MeTTa without `lambda`
+;; ;; (: curry2 (-> (-> $a $b $c $d) (-> $a (-> $b $c $d))))
 ;; (= (((curry2 $f) $x) $y $z) ($f $x $y $z))
 ;;
 ; ;; Add numbers in an atom list
-(= (sum $list) (foldr + 0 $list))
+(= (sum $list) (foldl-atom $list 0 $acc $x (+ $acc $x)))
 
 ;; Function to count atom occrence in a list of atoms.
 (= (count $atom $list)
-   (if (== $list ())
+    (if (== $list ())
         0
-        (sum (collapse (if (== $atom (superpose $list)) 1 (empty))))))
-
+        (size-atom (filter-atom $list $x (== $x $atom)))
+    )
+)
 ;; A function to check if a given atom is symbol.
 (: isSymbol (-> Expression Bool))
 (= (isSymbol $expr) (== (get-metatype $expr) Symbol))
@@ -252,7 +250,7 @@
 (= (isExpression $expr) (== (get-metatype $expr) Expression))
 
 ;; A function to check if a given atom is unit or empty tuple.
-(: isUnit (-> Atom Bool))
+;; (: isUnit (-> Atom Bool))
 (= (isUnit $expr) (== $expr ()))
 
 (: isEven (-> Number Bool))
@@ -447,32 +445,32 @@
              (merge (sort $left $halfL $key) (sort $right (- $len $halfL) $key) $key))))
 
 ;; function to partially sort the smallest $n Atoms from an expression
-(: selectionSort (-> Expression Number Expression))
-(= (selectionSort $list $n) (selectionSort $list $n <))
-(: selectionSort (-> Expression Number (-> $a $a Bool) Expression))
-(= (selectionSort $list $n $op)
-    (if (or (== $n 0) (== $list ()))
-        $list
-     (let* (
-        ($initial (car-atom $list))
-        ($cur (selector $list $initial $op))
-        ($newList (subtractionAtom $list ($cur)))
-        ($rest (selectionSort $newList (- $n 1) $op))
-    )
-    (cons-atom $cur $rest)
-    )))
-
+;; (: selectionSort (-> Expression Number Expression))
+;; (= (selectionSort $list $n) (selectionSort $list $n <))
+;; (: selectionSort (-> Expression Number (-> $a $a Bool) Expression))
+;; (= (selectionSort $list $n $op)
+;;     (if (or (== $n 0) (== $list ()))
+;;         $list
+;;      (let* (
+;;         ($initial (car-atom $list))
+;;         ($cur (selector $list $initial $op))
+;;         ($newList (subtractionAtom $list ($cur)))
+;;         ($rest (selectionSort $newList (- $n 1) $op))
+;;     )
+;;     (cons-atom $cur $rest)
+;;     )))
+;;
 ;; Helper function that compare two Atoms based on $op and return the one
 (: comparator (-> $a $a (-> $a $a Bool) $a))
 (= (comparator $x $y $op) (if ($op $x $y) $x $y))
 
 ;; Helper function that select one atom from the $expr based on the comparation function $op
-(: selector (-> Expression (-> $a $a Bool) $a))
-(= (selector $expr $op) (selector $expr (car-atom $expr) $op) )
-(: selector (-> Expression $a (-> $a $a Bool) $a))
-(= (selector $expr $i $op) 
-    (foldl-atom $expr $i $x $acc (comparator $x $acc $op))
-)
+;; (: selector (-> Expression (-> $a $a Bool) $a))
+;; (= (selector $expr $op) (selector $expr (car-atom $expr) $op) )
+;; (: selector (-> Expression $a (-> $a $a Bool) $a))
+;; (= (selector $expr $i $op) 
+;;     (foldl-atom $expr $i $x $acc (comparator $x $acc $op))
+;; )
 
 ;; A function to take an atom and repeat it n times.
 (: repeat (-> Atom Number Atom))
@@ -620,7 +618,7 @@
         )))
 ;; This function adds list to space
 (= (addListToSpace $space $list)
-    (add-reduct $space (superpose $list))
+    (add-reduct $space $list)
 )
 
 ;; a function that checks that all of the expressions are true.
@@ -651,16 +649,16 @@
 ;; (: >>= (-> $a $a Bool))
 ;; (= (>>= ($ctor $x) ($ctor $y))(>= $x $y));; List.Sum for any (List $a) $a of (typeConstructor Number) type
 ;;
-;; (: List.sum (-> (-> $a $a $a) (List $a) $a))
-;; (= (List.sum $adder Nil) Nil)
-;; (= (List.sum $adder (Cons $x $xs))
-;;     (if (== $xs Nil)
-;;         $x
-;;         (let $c (List.sum $adder $xs)
-;;             ($adder $x $c))))
-;;
-; ;; overloading the above function to work with list of numbers
-; (: List.sum (-> (List $a) $a))
+(: List.sum (-> (-> $a $a $a) (List $a) $a))
+(= (List.sum $adder Nil) Nil)
+(= (List.sum $adder (Cons $x $xs))
+    (if (== $xs Nil)
+        $x
+        (let $c (List.sum $adder $xs)
+            ($adder $x $c))))
+
+ ;; overloading the above function to work with list of numbers
+ (: List.sum (-> (List $a) $a))
 ; (= (List.sum $list) (List.sum + $list))
 
 ;; A function to take any two types which have the same constructor and add them.
@@ -725,9 +723,9 @@
         $b))
 
 ;; helper function to generate list of numbers ranging from 0 to n
-(: genList (-> Number Expression))
-(= (genList $u) (genList 0 $u))
-
+;; (: genList (-> Number Expression))
+;; (= (genList $u) (genList 0 $u))
+;;
 (: genList (-> Number Number Expression))
 (= (genList $l $u)
     (if (< $u $l)
@@ -815,7 +813,8 @@
 ;;   (apply < cscore1 cscore2)
 ;;   (apply == cscore1 cscore2)
 ;;
-(: apply (-> (-> $a $b $c) $d $e))
+;; Fix apply type is not working in PeTTa 
+;; (: apply (-> (-> $a $b $c) $d $e))
 
 ;; ------------------------------------------------------------
 ;; Generic projection and comparators to support reusable apply (comparisons only)
@@ -1142,3 +1141,95 @@
                   $then
             )
             ))
+
+;; It returns True only if the input is zero.
+(: isZero (-> Number Bool))
+(= (isZero $x) (== $x 0))
+
+;; It will return True if greater than 10.
+(: greaterThanTen (-> Number Bool))
+(= (greaterThanTen $x) (> $x 10))
+
+;; It will decrement the input by 1.
+(: decrement (-> Number Number))
+(= (decrement $x) (- $x 1))
+
+;; It will increment the input by 1.
+(: increment (-> Number Number))
+(= (increment $x) (+ $x 1))
+
+;; A function that turns every atom to unit
+(: transformToUnit (-> Atom Atom))
+(= (transformToUnit $x) ())
+
+; %%%% Hyperon-Experimental compatibility library. %%%%
+; Many of the included functions were considered ad hoc and
+; straightforward to express directly in MeTTa itself:
+
+;Equality and Reduction
+(= (if-equal $A $B $Then $Else)
+   (if (== $A $B) $Then $Else))
+
+(= (if-equal2 $A $B $Then $Else)
+   (if (== $A $B) $Then $Else))
+
+(= (assertEqual $A $B)
+   (assert (== $A $B)))
+
+(= (assertAlphaEqual $A $B)
+   (assert (=alpha $A $B)))
+
+(: unify (-> Expression Expression Expression Expression %Undefined%))
+(= (unify $a $b $then $else)
+   (if (= $a $b)
+       (eval $then)
+       (eval $else)))
+
+(: add-reduct (-> %Undefined% Expression Bool))
+(= (add-reduct $space $f)
+   (let* (($headbody (cdr-atom $f))
+          ($head (car-atom $headbody))
+          ($body (cdr-atom $headbody))
+          ($bodyreduced (eval $body)))
+         (add-atom $space (= $head $bodyreduced))))
+
+;Error Handling
+(= (if-error $X $A $B)
+   (if (== (car-atom $X) Error) 
+       $A $B))
+
+(= (return-on-error $result $B)
+   (if-error $result
+             $result
+             $B))
+
+;Evaluation control
+(= (for-each-in-atom $L $f)
+   (map-atom $L $f))
+
+(: evalc (-> Expression %Undefined% %Undefined%))
+(= (evalc $expression &self)
+   (eval $expression))
+
+;Quoting
+(: unquote (-> Expression %Undefined%))
+(= (unquote (quote $A))
+   (eval $A))
+
+(: noreduce-eq (-> Expression Expression Bool))
+(= (noreduce-eq $A $B)
+   (== $A $B))
+
+;Types
+(= (is-function (-> $A $B)) (let $temp (cut) True))
+(= (is-function $X) False)
+
+(= (get-type-space &self $x)
+   (get-type $x))
+
+(= (match-types $A $B $Then $Else)
+   (if (== $A $B) $Then $Else))
+
+(= (match-type-or $value $type1 $type2)
+   (match-types $type1 $type2 True $value))
+

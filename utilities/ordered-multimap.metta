@@ -3,10 +3,6 @@
 (: NilMMap (MultiMap ($k $v)))
 (: ConsMMap (-> ($k $v) (MultiMap ($k $v)) (MultiMap ($k $v))))
 
-;; default insert function that insert an element to the Ordered MultiMap using <=.
-(: MultiMap.insert (-> ($k $v) (MultiMap ($k $v)) (MultiMap ($k $v))))
-(= (MultiMap.insert $newValue $mMap) (MultiMap.insert $newValue $mMap <=))
-
 ;; insert an element to the Ordered multimap using custum function
 (: MultiMap.insert (-> ($k $v) (MultiMap ($k $v)) (-> $k $k Bool) (MultiMap ($k $v))))
 (= (MultiMap.insert ($key $value) NilMMap $fn) (ConsMMap ($key $value) NilMMap))
@@ -14,6 +10,10 @@
         (if ($fn $key $curKey)
             (ConsMMap ($key $value) (ConsMMap ($curKey $curVal) $tail))
             (ConsMMap ($curKey $curVal) (MultiMap.insert ($key $value) $tail $fn))))
+
+;; default insert function that insert an element to the Ordered MultiMap using <=.
+(: MultiMap.insert (-> ($k $v) (MultiMap ($k $v)) (MultiMap ($k $v))))
+(= (MultiMap.insert $newValue $mMap) (MultiMap.insert $newValue $mMap <=))
 
 ;; Get the key value pair given an index.
 (: MultiMap.getByIdx (-> Number (MultiMap ($k $v)) ($k $v)))

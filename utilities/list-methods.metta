@@ -19,8 +19,8 @@
 
 ;; generalized foldl and foldr
 ;; considering potential transfomration of input values before applying a function over them
-(= (id $x) $x)
-(= (exp $x) ($x))
+;; (= (id $x) $x)
+;; (= (exp $x) ($x))
 ;;??? is the name List.tFoldl/tFoldr is better than List.t-foldl	
 (= (List.tFoldl Nil $f $t $acc) $acc)		
 (= (List.tFoldl (Cons $x $xs) $f $t $acc) (let $tr ($t $x) (let $new-acc ($f $acc $tr) (List.tFoldl $xs $f $t $new-acc))))		
@@ -51,7 +51,7 @@
        (Cons $head (List.insert $x $tail))))
 
 ;; Sort a List in ascending order
-(: List.sort (-> (List $a) (List $a)))
+;; (: List.sort (-> (List $a) (List $a))) ;; FIx Type system not working in peTTa
 (= (List.sort Nil) Nil)
 
 ;; Default to sort in asecnding order
@@ -77,7 +77,7 @@
 (= (List.map $f (Cons $x $xs)) (Cons ($f $x) (List.map $f $xs)))
 
 ;; Map a function that takes an additional arg
-(: List.mapOverArg (-> (-> $a $b $a) $b (List $a)))
+(: List.mapOverArg (-> (-> $a $b $a) $b $arg (List $a)))
 (= (List.mapOverArg $f Nil $arg) Nil)
 (= (List.mapOverArg $f (Cons $head $tail) $arg)
     (let $new-head ($f $head $arg)
