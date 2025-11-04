@@ -1,7 +1,8 @@
 ;; Helper functions that are going to be useful for writing any metta code
 
-!(bind! perf_counter (py-atom "time.perf_counter"))
-!(bind! round (py-atom "round"))
+!(bind! perf_counter (new-state (py-call "time.perf_counter")))
+(= (round $x)(py-call ("round" $x)))    ;; python method calling is py-call unlike py-atom in mettalog 
+(= (assertEqual $a $b)( (test $a $b))) ;;unlike assert function test function shows the expected and got output so this may be better for debuging simply.
 
 ;; Measures the average execution time of a given expression over multiple runs.
 ;; Parameters:
@@ -63,7 +64,7 @@
 
 
 ;; (: != (-> Atom Atom Bool)) Fix Type not working in petta
-(= (!= $a $b) (not (== $a $b)))
+(= (~= $a $b) (not (== $a $b)))
 ;Function to cocatinate two tuples (A B) (C D) ==> (A B C D)
 ;; (: concatTuple (-> Expression Expression Expression))
  (= (concatTuple $x $y) (collapse (union (superpose $x) (superpose $y)))) ;; FIX: No longer working on version 0.2.3
@@ -90,16 +91,16 @@
 
 ; a helper function to the isConsistentExp function.
 ; a function which checks if an element is member of a tuple.
-;; (: isMember (-> $a aa Bool)) ;; FIX this Type behaving werid in petta I believe its becuase of superpose/collapse 
-(= (isMember $x $list)
-    (not (== (collapse (intersection (superpose ($x)) (superpose $list))) ()))
-)
+;; (: isMember (-> $a $aa Bool)) ;; this function can be replace by its exact same builtin petta function is-member
+;; (= (isMember $x $list)
+;;     (not (== (collapse (intersection (superpose ($x)) (superpose $list))) ()))
+;; )
 
 ; This function assumes it receives a set1 and set2 expression as parameters.
 ; It then removes similar elements found in set2 that already exist in set1.
 ; The function uses isMember from general helpers functions.
 
-(: setDifference (-> Expression Expression Expression))
+; (: setDifference (-> Expression Expression Expression))
 (= (setDifference $set1 $set2) 
     (if (== $set1 ()) () ; Base case: return empty set when $set1 is empty
         (let* (
@@ -109,7 +110,7 @@
         )
             ; Check if the $head is in set2, if so, skip it
 
-            (if (isMember $head $set2)
+            (if (is-member $head $set2)
                 $newtail 
                 ; Otherwise, add the head to the new tail, avoiding unnecessary parentheses
                 (if (== (get-metatype $newtail) Expression) (cons-atom $head $newtail) $head)  ; Avoid wrapping the head if it's already properly structured
@@ -157,15 +158,13 @@
 ;; A foldleft function like the implementation in Haskell.
 ;; It takes a binary function that expects two atoms and
 ;;    apply it recursively on a nested atom.
-
-;; this function is commmented out because it creates conflict with built-in foldl-atom
-;; (: foldl (-> (-> $a $b $d) $b $c $d))
-;; (= (foldl $f $acc $tuple)
-;;    (if (== $tuple ())
-;;        $acc
-;;        (let $next (car-atom $tuple) (foldl $f ($f $next $acc) (cdr-atom $tuple)))
-;;    )
-;; )
+; (: foldl (-> (-> $a $b $d) $b $c $d))
+(= (foldl $f $acc $tuple)
+   (if (== $tuple ())
+       $acc
+       (let $next (car-atom $tuple) (foldl $f ($f $next $acc) (cdr-atom $tuple)))
+   )
+)
 
 ;; Fold a tuple from right to left
 ;; (: foldr (-> (-> $a $b $b) $b $c $d))
@@ -220,7 +219,7 @@
 ; ;;          input ==> (False False False), output ==> False
 ; ;;          input ==> (False True False), output ==> True
 (: any (-> Atom Bool))
-(= (any $bools) (isMember True $bools))
+(= (any $bools) (is-member True $bools))
 
 ;; Fix curry is not working in petta 
 ;; ;; A trick to define `curry` in MeTTa without `lambda`
@@ -235,25 +234,21 @@
 (= (sum $list) (foldl-atom $list 0 $acc $x (+ $acc $x)))
 
 ;; Function to count atom occrence in a list of atoms.
-(= (count $atom $list)
-    (if (== $list ())
-        0
-        (size-atom (filter-atom $list $x (== $x $atom)))
-    )
-)
+(= (count $list $t)(let $r (filter-atom $list $x (== $x $t)) (length $r)))
+
 ;; A function to check if a given atom is symbol.
-(: isSymbol (-> Expression Bool))
+; (: isSymbol (-> Expression Bool))
 (= (isSymbol $expr) (== (get-metatype $expr) Symbol))
 
 ;; A function to check if a given atom is expression.
-(: isExpression (-> Atom Bool))
+; (: isExpression (-> Atom Bool))
 (= (isExpression $expr) (== (get-metatype $expr) Expression))
 
 ;; A function to check if a given atom is unit or empty tuple.
 ;; (: isUnit (-> Atom Bool))
 (= (isUnit $expr) (== $expr ()))
 
-(: isEven (-> Number Bool))
+;; (: isEven (-> Number Bool))
 (= (isEven $x) (== (% $x 2) 0))
 
 (: isOdd (-> Number Bool))
@@ -265,15 +260,15 @@
 (= (hasOneAtom $expr) (if (and (== (get-metatype $expr) Expression) (not (isUnit $expr))) (== (cdr-atom $expr) ()) False))
 
 ;; Function to replace a given atom from a space ;; FIX: No longer working on version 0.2.3
-(: update-atom (-> Grounded Atom Atom (->)))
+;; (: update-atom (-> Grounded Atom Atom (->)))
 (= (update-atom $space $oatom $natom) (let $_ (remove-atom $space $oatom) (add-atom $space $natom)))
 
 ;; Function to replace a given atom from a space. ;; FIX: No longer working on version 0.2.3
 (: appendAtom (-> Atom Atom Atom))
 (= (appendAtom $a $atom) (foldr cons-atom ($a) $atom))
 
-;; Return the maximum of two numbers.
-;; (= (max $x $y) (if (< $x $y) $y $x))
+; ;; Return the maximum of two numbers.; this may raise a conflict with petta's builtin max function
+; (= (max $x $y) (if (< $x $y) $y $x))
 
 ;; A function to return a tuple of numbers from natural to a given number.
 ;; $x is the upperbound
@@ -284,12 +279,12 @@
        $acc
        (let $lastInserted (car-atom $acc) (gen $x (cons-atom (+ 1 $lastInserted) $acc)))))
 
-;; ; ;; A function to return head and tail of an atom in a tuple.
-;; (= (decons $atom)
-;;    (if (not (or (isSymbol $atom) (isUnit $atom)))
-;;        ((car-atom $atom) (cdr-atom $atom))
-;;        (Error Unit Or Symbol cannot be deconstructed)))
-;;
+; ; ;; A function to return head and tail of an atom in a tuple. ; this also raise error for petta also has builtin decons function
+; (= (decons $atom)
+;    (if (not (or (isSymbol $atom) (isUnit $atom)))
+;        ((car-atom $atom) (cdr-atom $atom))
+;        (Error Unit Or Symbol cannot be deconstructed)))
+
 ;; Function to create a tuple of tuples given two equal length list of atoms. ;; FIX: No longer working on version 0.2.3
 (= (zip $a $b)
    (if (or (hasOneAtom $a) (hasOneAtom $b))
@@ -305,7 +300,7 @@
 
 ;; Similar to zip but instead of just creating a tuple of atoms,
 ;;  it performes an operation of $f on them and returns the resulting list of atoms.
-(: zipWith (-> (-> $a $b $c) $d $e $f))
+;; (: zipWith (-> (-> $a $b $c) $d $e $f))
 (= (zipWith $f $xs $ys)
    (if (== $xs ())                      ; We assume (arity $xs) == (arity $ys)
        ()
@@ -324,7 +319,7 @@
         )))
 
 ;; A function to replace an atom at a specific index position with $val -- 0 indexed counting is implied
-(: replaceByIndex (-> Expression Number $t Expression))
+;; (: replaceByIndex (-> Expression Number $t Expression))
 (= (replaceByIndex $expr $index $new)
     (if (== $expr ())
         $expr
@@ -365,7 +360,7 @@
                 (return Empty)))))))   
             
 ;; removeAtom -- removes a single atom (the first occurrunce) from a tuple                                
-(: removeAtom (-> Atom Expression Expression))                                
+;; (: removeAtom (-> Atom Expression Expression))                                
 (= (removeAtom $atom $expr)
     (function 
         (eval (if-decons-expr-custom $expr $head $tail
@@ -412,7 +407,7 @@
 ;; A function to split a list in to two at an index so that everything
 ;;    until that index without including that index as first tuple and 
 ;;    the rest as the second.
-(: splitAt (-> Number Expression (Atom Atom)))
+;; (: splitAt (-> Number Expression (Atom Atom)))
 (= (splitAt $n $list)
    (case ($n $list)
      (
@@ -445,35 +440,44 @@
              (merge (sort $left $halfL $key) (sort $right (- $len $halfL) $key) $key))))
 
 ;; function to partially sort the smallest $n Atoms from an expression
-;; (: selectionSort (-> Expression Number Expression))
-;; (= (selectionSort $list $n) (selectionSort $list $n <))
-;; (: selectionSort (-> Expression Number (-> $a $a Bool) Expression))
-;; (= (selectionSort $list $n $op)
-;;     (if (or (== $n 0) (== $list ()))
-;;         $list
-;;      (let* (
-;;         ($initial (car-atom $list))
-;;         ($cur (selector $list $initial $op))
-;;         ($newList (subtractionAtom $list ($cur)))
-;;         ($rest (selectionSort $newList (- $n 1) $op))
-;;     )
-;;     (cons-atom $cur $rest)
-;;     )))
-;;
+; (: selectionSort (-> Expression Number Expression))
+(= (selectionSort $list $n) (selectionSort $list $n <))
+; (: selectionSort (-> Expression Number (-> $a $a Bool) Expression))
+(= (selectionSort $list $n $op)
+    (if (or (== $n 0) (== $list ()))
+        $list
+     (let* (
+        ($initial (car-atom $list))
+        ($cur (selector $list $initial $op))
+        ($newList (subtraction-atom $list ($cur))) ;since the subtractionAtom (the custom one) isn't working now but this subtraction-atom does same thing.
+        ($rest (selectionSort $newList (- $n 1) $op))
+    )
+    (cons-atom $cur $rest)
+    )))
+
 ;; Helper function that compare two Atoms based on $op and return the one
-(: comparator (-> $a $a (-> $a $a Bool) $a))
+;;  (: comparator (-> $a $a (-> $a $a Bool) $a))
 (= (comparator $x $y $op) (if ($op $x $y) $x $y))
 
 ;; Helper function that select one atom from the $expr based on the comparation function $op
-;; (: selector (-> Expression (-> $a $a Bool) $a))
-;; (= (selector $expr $op) (selector $expr (car-atom $expr) $op) )
-;; (: selector (-> Expression $a (-> $a $a Bool) $a))
-;; (= (selector $expr $i $op) 
-;;     (foldl-atom $expr $i $x $acc (comparator $x $acc $op))
-;; )
+; (: selector (-> Expression (-> $a $a Bool) $a))
+(= (selector $expr $op) (selector $expr (car-atom $expr) $op) )
+; (: selector (-> Expression $a (-> $a $a Bool) $a))
+;;for the petta foldl-atom doesn't works for nested list(lists or expression inside list) a custom method re-implemented for the selector helper.
+(= (selector $expr $i $op)
+(if (== $expr ())
+     $i
+     (let*  (
+             ($head (car-atom $expr))
+             ($tail (cdr-atom $expr))
+              ($result (comparator $head $i $op))
+            )
+          (selector $tail $result $op))
+)
+)
 
 ;; A function to take an atom and repeat it n times.
-(: repeat (-> Atom Number Atom))
+;; (: repeat (-> Atom Number Atom))
 (= (repeat $a $n)
    (if (== $n 0)
        ()
@@ -481,7 +485,7 @@
    )
 )
 
-(: take (-> Number Atom Atom))
+;; (: take (-> Number Atom Atom))
 (= (take $n $a)
     (case ($n $a)
           (
@@ -496,7 +500,7 @@
 
 ;; A function to remove the frist n elements of a tuple 
 ;;   and returns the rest.
-(: drop (-> Number Atom Atom))
+;; (: drop (-> Number Atom Atom))
 (= (drop $n $a)
     (case ($n $a)
       (
@@ -509,12 +513,9 @@
               ($r (drop (- $n 1) $t)))
             $r)))))
 
-;; ;; non-deterministic definitio of length
-;;
 ;; (= (length $expr)
 ;;     (sum (collapse (let $a (superpose $expr) 1)))
 ;; )
-;;
 ;; isLiteral -- determines if the given atom is a literal or not
 
 (= (isLiteral $a)
@@ -588,7 +589,7 @@
 
 ;; map` -- a modified map functinality with, i.e., a map that takes a function which has two inputs
 
-(: map` (-> (-> $a $a $b) $a $c $d))
+;; (: map` (-> (-> $a $a $b) $a $c $d))
 (= (map` $f $x $xs)
    (if (== $xs ())
        ()
@@ -600,7 +601,7 @@
 
 ;; notNt -- check if a symbol is not a member of the non-terminal set
 
-(= (notMember $symbol $expr) (not (isMember $symbol $expr)))
+(= (notMember $symbol $expr) (not (is-member $symbol $expr)))
 
 ;; isValidExp -- to check if the boolean expression produced by genPhen is a valid bolean expression
 ;;          $exp -- an expression which is being checked for validity
@@ -622,8 +623,8 @@
 )
 
 ;; a function that checks that all of the expressions are true.
-(: all (-> Expression Bool))
-(= (all $expressions) (if (isMember False $expressions) False True))
+; (: all (-> Expression Bool))
+(= (all $expressions) (if (is-member False $expressions) False True))
 
 
 ;; Name:                        ===
@@ -657,8 +658,8 @@
         (let $c (List.sum $adder $xs)
             ($adder $x $c))))
 
- ;; overloading the above function to work with list of numbers
- (: List.sum (-> (List $a) $a))
+; ;; overloading the above function to work with list of numbers
+; (: List.sum (-> (List $a) $a))
 ; (= (List.sum $list) (List.sum + $list))
 
 ;; A function to take any two types which have the same constructor and add them.
@@ -666,12 +667,12 @@
 ;;           ($ctor $b): The second argument with the same constructor as the first
 ;;   returns: Sum of the types if they both contain numbers
 ;;            An error if they can't be added together
-;; (: add (-> $a $a $a))
-;; (= (add ($ctor $a) ($ctor $b))
-;;      (if (== (get-type $a) Number)
-;;             ($ctor (+ $a $b))
-;;             (Error ($a or $b) "One of the argument is not a number")))
-;;
+(: add (-> $a $a $a))
+(= (add ($ctor $a) ($ctor $b))
+     (if (== (get-type $a) Number)
+            ($ctor (+ $a $b))
+            (Error ($a or $b) "One of the argument is not a number")))
+
 ;; wrapping the built-in ininf-math with custom function because the return type is not bool, it is number
 ;; using the type-cast function 
 ;; obsolete in mettalong for now
@@ -702,7 +703,7 @@
 
 ;; Converts a tuple of pairs into ordered multimap
 ;; Ex: ((k1 v1) (k2 v2)) -> (ConsMMap (k1 v1) (ConsMMap (k2 v2) NilMMap))
-(: expToMMap (-> Expression (MultiMap ($k $v)) (-> $k $k Bool) (MultiMap ($k $v))))
+;; (: expToMMap (-> Expression (MultiMap ($k $v)) (-> $k $k Bool) (MultiMap ($k $v))))
 (= (expToMMap () $map $compFunc) NilMMap)
 (= (expToMMap $tuple $map $compFunc)
 (let*
@@ -743,18 +744,19 @@
     )
 )
 
-;; (: compose (-> (-> $b $c) (-> $a $b) (-> $a $c)))
-;; (= ((compose $g $f) $x) ($g ($f $x)))
+; (: compose (-> (-> $b $c) (-> $a $b) (-> $a $c)))
+; (= ((compose $g $f) $x) ($g ($f $x)))
 
 ;; approximate equality -- takes the relative magnitude of the numbers into consideration
-! (bind! EPSILON (pow-math 10 -6))
+
+!(bind! EPSILON (new-state (pow-math 10 -6))) ;in petta to bind some constant like this we need to do it by new-state function and  to retrieve get-state function
 (: isApproxEq (-> Number Number Bool))
 (= (isApproxEq $x $y)
     (let $diff (abs-math (- $x $y))
-        (if (< $diff EPSILON)
+        (if (< $diff (get-state EPSILON))
             True
             (let $amp (abs-math (+ $x $y))
-                (<= $diff (* EPSILON $amp))))))
+                (<= $diff (* (get-state EPSILON) $amp))))))
 ;; A function to concatenate two expressions.
 (= (concatT $expr1 $expr2)
     (if (== $expr1 ())
@@ -788,15 +790,15 @@
 (: int (-> Number Number))
 (= (int $x) (if (>= $x 0) (floor-math $x) (+ 1 (floor-math $x))))
 
-! (bind! EXP 2.71828)
+!(bind! EXP (new-state 2.71828))
 
-;; random float  -- fake rnd number [0 1]
-! (bind! maxInt (pow-math 2 64)) ;; pseudo max integer not really the max integer that can be represented 
+; ;; random float  -- fake rnd number [0 1]
+!(bind! maxInt (new-state (pow-math 2 64))) ;; pseudo max integer not really the max integer that can be represented 
 ;; the idea is to divide a random int taken from 0 upto this number by this number
 (: randomFloat (-> Number))
-(= (randomFloat) (let $rndInt (random-int &rng 0 maxInt) (/ $rndInt maxInt)))
-! (bind! rnd (py-atom random))
-! ((py-dot rnd seed) 0)
+(= (randomFloat)(py-call ("random.random")))
+!(bind! rnd (py-atom random))
+!((py-dot rnd seed) 0)
 
 ;; ============================================================
 ;; Apply Function — restricted to value comparisons only
