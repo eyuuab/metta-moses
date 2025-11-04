@@ -1,5 +1,5 @@
 !(import! &self ../general-helpers)
-!(import! &self "../ordered-multimap")
+!(import! &self ../ordered-multimap)
 !(import! &self ../list-methods)
 !(import! &self ../map)
 !(import! &self ../../representation/knob-representation)
