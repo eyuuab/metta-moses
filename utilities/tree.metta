@@ -243,7 +243,7 @@
 (: isArgument (-> (Tree $a) Bool))
 (= (isArgument (mkNullVex $x)) False)
 (= (isArgument (mkTree (mkNode $x) $children))
-   (and (not (isMember $x (AND OR NOT))) (== $children Nil)))
+   (and (not (is-member $x (AND OR NOT))) (== $children Nil)))
 
 ;; A function to calculate the complexity of a tree.
 ;;  The complexity of a tree is the number of arguments it contains.
@@ -265,7 +265,7 @@
 ;; extract labels from a tree structure as list of symbols
 (: extractArgs (-> (Tree $a) (List Symbol)))
 (= (extractArgs (mkTree (mkNode $node) $children))
-    (if (isMember $node (AND OR NOT))
+    (if (is-member $node (AND OR NOT))
         (extractArgsFromList $children)         ;; if it's an operator, collect args from children
         (Cons $node Nil)))                       ;; else it's a literal, return it in a singleton list
     
@@ -289,7 +289,7 @@
     
 (: removeLiteral (-> (Tree $a) Symbol (Tree $a)))
 (= (removeLiteral (mkTree (mkNode $node) $children) $symbol)
-    (if (isMember $node (AND OR NOT))
+    (if (is-member $node (AND OR NOT))
         (mkTree (mkNode $node) (List.mapOverArg removeLiteral $children $symbol))
         (if (== $node $symbol)
             Nil

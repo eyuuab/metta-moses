@@ -21,7 +21,7 @@
                 ((mkTree (mkNode $node) $childern) $head)
                 ;; (() (println!( "curId: " $curId "node :" $node)))
                 ;; (() (println!( "head: " $head "tail :" $tail)))
-                (($tNew  $mNew) (if (isMember $node (AND OR NOT));;
+                (($tNew  $mNew) (if (is-member $node (AND OR NOT));;
                                 (buildLogical $tree (mkNodeId $curId) $MMap $argLabels)
                                 (let  $itree (insertNodeAtPosition $tree (mkNodeId $curId) (mkNode $swapedOp))  (addLogicalKnobs $itree (mkNodeId $curId) True $MMap $argLabels))
                             ))

@@ -40,7 +40,7 @@
           (
             ($pairs (collapse ((superpose $handleSet) (superpose $handleSet))))
             ($result (collapse (areNegations (superpose $pairs)))))
-          (if (isMember True $result)
+          (if (is-member True $result)
               False
               True
           )

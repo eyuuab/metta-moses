@@ -29,7 +29,7 @@
               ((AND $_) ($parent $current False))
               ((OR ()) ($parent $current False))
               ((OR $children)
-                  (if (isMember False $childrenHasChildOrGuard)
+                  (if (is-member False $childrenHasChildOrGuard)
                       ((removeElement ($current) $parent) () True)
                       ($parent $current False)
                   )
