@@ -179,7 +179,7 @@
                     (selectUnique ($generatedFirst) (- $sampleSize 1) $dist $kbMp $inst)
            )
            (let $generatedInstance (sampleFromNeighborhood` $sampleSize $dist $kbMp $inst)
-                           (if (isMember $generatedInstance $expr)
+                           (if (is-member $generatedInstance $expr)
                                (selectUnique $expr $sampleSize $dist $kbMp $inst)
                                (selectUnique (concatT  ($generatedInstance) $expr )(- $sampleSize 1) $dist $kbMp $inst)
                             )

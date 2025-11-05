@@ -35,7 +35,7 @@
        $selected
        (chain ((py-dot rnd randint) 0 (- $numFeatures 1)) $randomIdx
         ; the above is referred from opencog/cogutil/random.h -> https://github.com/opencog/cogutil/blob/6b149c457c9cfbf5edccefb166a7a9a1d2d74196/opencog/util/random.h#L72C1-L72C6
-         (if (isMember $randomIdx $selected)
+         (if (is-member $randomIdx $selected)
              (randomSelectHelper $numFeatures $count $selected)
              ;  this implementation actually slightly changes the the c++ implementation 
             ; In the C++ Implementation if a duplicate feature is selected, the function ignores it but still decrements the $count. 
