@@ -1,4 +1,4 @@
-name: MeTTaLog CI
+name: PeTTa CI
 
 on:
   push:
