@@ -11,26 +11,12 @@ on:
 jobs:
   setup-and-test:
     runs-on: ubuntu-latest
-    # container:
-    #   image: indominyus/mettalog:latest
+    container:
+      image: bluesky21/petta:latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up PeTTa
-        run: |
-          git clone https://github.com/patham9/PeTTa.git
-          cd PeTTa
-          chmod +x run.sh
-          sed -i "s|SCRIPT_DIR=.*|SCRIPT_DIR=\"$(pwd)/src/main.pl\"|" run.sh
-          sed -i "s|MORK_DIR=.*|MORK_DIR=\"$(pwd)/mork_ffi/target/release/libmork_ffi.so\"|" run.sh
-          echo "export PATH=$(pwd):\$PATH" >> $GITHUB_ENV
-      
-      - name: Debug PATH
-        run: |
-          echo $PATH
-          which run.sh 
 
       - name: Run PeTTa test
         run: |
