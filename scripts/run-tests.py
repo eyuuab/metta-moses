@@ -23,26 +23,24 @@ def extract_and_print(result, path, idx) -> bool:
     """
     Extracts the output from the test execution result and prints the status.
     """
-    # Always use stdout for mettalog output
+    # Always use stdout for petta output
     output = result.stdout if result.stdout else result.stderr
-    extracted = output.replace("[()]\n", "")
+    extracted = output.strip()  # Remove any leading/trailing whitespace
 
-    # Check for actual failures in the LoonIt Report
-    has_failure = False
-    # Treat exit code 1 as success, anything else as failure
-    if result.returncode != 1: #NOTE: here its due to mettalog treating exit code 1 as success in the future it should be changed to 0
-        has_failure = True
-        extracted = f"test failed (exit code {result.returncode})"
-    elif "Failures:" in extracted:
-        # Extract the failures count
-        import re
-        failures_match = re.search(r"Failures:\s*(\d+)", extracted)
-        if failures_match:
-            failures_count = int(failures_match.group(1))
-            has_failure = failures_count > 0
-    if not has_failure:
+    # Debug: Print the raw output for troubleshooting
+    # print(f"Raw output: {output}")
+
+    # Check for actual failures in the Petta Report
+    has_failure = False  # Assume failure by default
+
+    # Treat exit code 0 as success, anything else as failure
+    if result.returncode == 0:
         extracted = "test passed"
+    else:
+        has_failure = True
+        extracted = f"test failed (output: {extracted})"
 
+    # Print the test result
     status_color = RED if has_failure else GREEN
     print(YELLOW + f"Test {idx + 1}: {path}" + RESET)
     print(status_color + extracted + RESET)
@@ -50,25 +48,26 @@ def extract_and_print(result, path, idx) -> bool:
     print("-" * 40)
 
     return has_failure
-
-
 def run_test_file(test_file):
     try:
         # Create a clean environment with bash as default shell
         env = os.environ.copy()
         env["SHELL"] = "/bin/bash"
 
-        # Use the full path to mettalog
-        mettalog_path = shutil.which("mettalog")
-        command = [mettalog_path, str(test_file)]
+        # Full path to the run.sh script
+        run_sh_path = shutil.which("run.sh")  # Replace with the actual path to run.sh
+        if not os.path.isfile(run_sh_path):
+            raise FileNotFoundError(f"{run_sh_path} not found")
 
-        # Don't use check=True since mettalog returns 1 even for successful tests
-        # Add timeout to prevent hanging in CI
+        # Command to execute the test file
+        command = [run_sh_path, str(test_file)]
+
+        # Run the command
         result = subprocess.run(
             command,
             capture_output=True,
             text=True,
-            check=False,  # Changed from True to False
+            check=False,
             shell=False,
             env=env,
         )
@@ -89,7 +88,6 @@ def run_test_file(test_file):
 
         return MockResult(), test_file, True
 
-
 # Function to print ASCII art
 def print_ascii_art(text):
     art = f"""
@@ -99,11 +97,9 @@ def print_ascii_art(text):
 
 
 # Define the command to run with the test files
-metta_run_command = "mettalog"
-
 root = pathlib.Path(".")
-testMettaFiles = list(root.rglob("*test.metta"))
-total_files = len(testMettaFiles)
+testPettaFiles = list(root.rglob("*test.metta"))
+total_files = len(testPettaFiles)
 results = []
 fails = 0
 failed_tests = []
@@ -119,16 +115,13 @@ print_ascii_art("Parallel Test Runner")
 with ThreadPoolExecutor(max_workers=1) as executor:
     future_to_test = {
         executor.submit(run_test_file, test_file): idx
-        for idx, test_file in enumerate(testMettaFiles)
+        for idx, test_file in enumerate(testPettaFiles)
     }
 
     for future in as_completed(future_to_test):
         idx = future_to_test[future]
         try:
             result, path, has_failure = future.result()
-            # print("")
-            # print("Result: ", result)
-            # print("")
 
             # Since we're no longer using check=True, we won't get CalledProcessError
             # Just check if the result is valid

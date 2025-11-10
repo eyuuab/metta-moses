@@ -3,28 +3,30 @@ name: MeTTaLog CI
 on:
   push:
     branches:
-      - main
-      - dev
-      - ref/*
-      - reduct-refactoring
+      - ref/PeTTa
   pull_request:
     branches:
-      - main
-      - dev
-      - ref/*
-      - reduct-refactoring
+      - ref/PeTTa
 
 jobs:
   setup-and-test:
     runs-on: ubuntu-latest
-    container:
-      image: indominyus/mettalog:latest
+    # container:
+    #   image: indominyus/mettalog:latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run mettalog test
+      - name: Set up PeTTa
         run: |
-          pip3 install ansi2html
+          git clone https://github.com/patham9/PeTTa.git
+          cd PeTTa
+          chmod +x run.sh
+          sed -i "s|SCRIPT_DIR=.*|SCRIPT_DIR=\"$(pwd)/src/main.pl\"|" run.sh
+          sed -i "s|MORK_DIR=.*|MORK_DIR=\"$(pwd)/mork_ffi/target/release/libmork_ffi.so\"|" run.sh
+          echo "export PATH=$(pwd):\$PATH" >> $GITHUB_ENV
+          
+      - name: Run PeTTa test
+        run: |
           python3 scripts/run-tests.py
