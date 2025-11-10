@@ -55,7 +55,7 @@ def run_test_file(test_file):
         env["SHELL"] = "/bin/bash"
 
         # Full path to the run.sh script
-        run_sh_path = shutil.which("run.sh")  # Replace with the actual path to run.sh
+        run_sh_path = shutil.which("run.sh")
         if not os.path.isfile(run_sh_path):
             raise FileNotFoundError(f"{run_sh_path} not found")
 
