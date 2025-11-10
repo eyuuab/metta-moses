@@ -26,7 +26,12 @@ jobs:
           sed -i "s|SCRIPT_DIR=.*|SCRIPT_DIR=\"$(pwd)/src/main.pl\"|" run.sh
           sed -i "s|MORK_DIR=.*|MORK_DIR=\"$(pwd)/mork_ffi/target/release/libmork_ffi.so\"|" run.sh
           echo "export PATH=$(pwd):\$PATH" >> $GITHUB_ENV
-          
+      
+      - name: Debug PATH
+        run: |
+          echo $PATH
+          which run.sh 
+
       - name: Run PeTTa test
         run: |
           python3 scripts/run-tests.py
