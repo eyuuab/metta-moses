@@ -5,7 +5,7 @@
 !(import! &self ../../representation/knob-representation)
 !(import! &self ../ordered-set)
 !(import! &self ../ordered-multiset)
-; !(import! &self ../../representation/instance)
+!(import! &self ../../representation/instance)
 !(import! &self ../../scoring/bscore)
 !(import! &self ../../scoring/cscore)
 
@@ -30,7 +30,7 @@
 !(assertEqual (Not (Not A)) A)
 
 ;; Tests for the function 'is-member'
-!(println! ("test is-member function to  replace is-member custom function"))
+!(println! ("test is-member function to  replace isMember custom function"))
 !(assertEqual (is-member 1 ()) False)
 !(assertEqual (is-member 2 (2 3 4 5)) True)
 !(assertEqual (is-member 3 (1 2 4 5)) False)
@@ -75,14 +75,16 @@
 !(assertEqual (increment 100000) 100001)
 
 ;; Test for actual until function
+!(println! (println! ("testing until")))
 !(assertEqual (until isZero decrement 10) 0)
 !(assertEqual (until greaterThanTen increment 0) 11)
 
 ;; FIX: Failing Test case
-;; !(assertEqual (until isUnit cdr-atom (foo bar bae)) ())
-;; !(assertEqual (until hasOneAtom cdr-atom (foo bar bae)) (bae))
+!(println! ("failing test in until now working ✅"))
+!(assertEqual (until isUnit cdr-atom (foo bar bae)) ())
+!(assertEqual (until hasOneAtom cdr-atom (foo bar bae)) (bae))
 
-;; Test for map function
+; Test for map function
 !(println! "testing map ")
 !(assertEqual (map increment (1 2 3 4)) (2 3 4 5))
 !(assertEqual (map decrement (1 2 3 4)) (0 1 2 3))
@@ -116,19 +118,21 @@
 
 ;; UNCOMMENT test below if curry works in petta 
 ;; Test curry function
-;; !(assertEqual (((curry +) 1) 2) 3)
-;; !(assertEqual (((curry -) 5) 4) 1)
+!(println! ("testing: curry"))
+!(assertEqual (((curry +) 1) 2) 3)
+!(assertEqual (((curry -) 5) 4) 1)
 ;;
 ;; ;; Test case for curry 2 function
-;; (: addThree (-> Number Number Number Number))
-;; (= (addThree $x $y $z) (+ $x (+ $y $z)))
+(: addThree (-> Number Number Number Number))
+(= (addThree $x $y $z) (+ $x (+ $y $z)))
 
-;; !(assertEqual (get-type ((curry2 addThree) 1)) (-> Number Number Number))
-;; !(assertEqual (let $res (((curry2 addThree) 1) 2 3) (get-type $res)) Number)
-;; !(assertEqual (((curry2 addThree) 1) 2 3) 6)
-;;
-;; !(assertEqual (get-type ((curry ((curry2 addThree) 1)) 2)) (-> Number Number))
-;; !(assertEqual (((curry ((curry2 addThree) 1)) 2) 3) 6)
+; !(assertEqual (get-type ((curry2 addThree) 1)) (-> Number Number Number))
+!(println! ("testing: curry2"))
+!(assertEqual (let $res (((curry2 addThree) 1) 2 3) (get-type $res)) Number)
+!(assertEqual (((curry2 addThree) 1) 2 3) 6)
+!(println! ("testing: curry and curry2"))
+!(assertEqual (get-type ((curry ((curry2 addThree) 1)) 2)) (-> Number Number))
+!(assertEqual (((curry ((curry2 addThree) 1)) 2) 3) 6)
 ;;
 ;; ;; ;; Test filter function ;; FIX: Failing Test case
 ;; ;; !(assertEqual (collapse (filter isUnit (9 10 () 5 4 ()))) (() ()))
@@ -226,16 +230,18 @@
 !(assertEqual (max 1 2) 2)
 !(assertEqual (max 2 4) 4)
 
-;; ;; FIX: Failing Test case
-;; !(assertEqual (gen 1 (0)) (1 0))
-;; !(assertEqual (gen 3 (0)) (3 2 1 0))
+;; FIX: Failing Test case
+!(assertEqual (println! ("testing failing case in gen it's working ✅")))
+!(assertEqual (gen 1 (0)) (1 0))
+!(assertEqual (gen 3 (0)) (3 2 1 0))
 !(println! ("testig: decons "))
 !(assertEqual (decons (A B C)) (A (B C)))
 !(assertEqual (decons (A)) (A ()))
 
-;; ;; FIX: Failing Test case
-;; !(assertEqual (zip (A B C) (1 2 3)) ((A 1) (B 2) (C 3)))
-;; !(assertEqual (zip (A B) (1 2 3)) ((A 1) (B 2)))
+; ;; ;; FIX: Failing Test case
+!(println! ("zip failing test case"))
+!(assertEqual (zip (A B C) (1 2 3)) ((A 1) (B 2) (C 3)))
+!(assertEqual (zip (A B) (1 2 3)) ((A 1) (B 2)))
 !(println! ("testig: zipWith "))
 !(assertEqual (zipWith == (A B C) (A 2 3)) (True False False))
 !(assertEqual (zipWith == (B C) (A 2 3)) (False False))
@@ -263,12 +269,12 @@
 !(assertEqual (index-atom (1 2 3 4) 3) 4)
 !(assertEqual (index-atom (1 2 3 4) 0) 1)
 
-; !(println! ("testig: removeAtom "))   here the removeAtmom is not working because of if-decons-expre-custom it will be fixed soon
-;; !(assertEqual (removeAtom 1 ()) ()) 
-;; !(assertEqual (removeAtom 1 (1)) ()) 
-;; !(assertEqual (removeAtom 1 (1 2)) (2)) 
-;; !(assertEqual (removeAtom 1 (1 2 3)) (2 3))
-;; !(assertEqual (removeAtom 1 (1 2 3 1 1)) (2 3 1 1)) 
+!(println! ("testig: removeAtom "))  ; here the removeAtmom is not working because of if-decons-expre-custom it will be fixed soon
+!(assertEqual (removeAtom 1 ()) ()) 
+!(assertEqual (removeAtom 1 (1)) ()) 
+!(assertEqual (removeAtom 1 (1 2)) (2)) 
+!(assertEqual (removeAtom 1 (1 2 3)) (2 3))
+!(assertEqual (removeAtom 1 (1 2 3 1 1)) (2 3 1 1)) 
 
 !(println! ("testig: subtraction-atom "))
 !(assertEqual (subtraction-atom (1 2 3) (4)) (1 2 3))
@@ -299,7 +305,6 @@
 !(assertEqual (drop 1 (A B C)) (B C))
 !(assertEqual (drop 2 (A B C)) (C))
 !(assertEqual (drop 2 ()) ())
-
 ;; Test selectByIndex
 !(println! ("testig: selectByIndex "))
 !(assertEqual (selectByIndex (0 1 2 3 4) 2) 2)
@@ -335,10 +340,10 @@
 !(add-atom &__ (A 2 3))
 !(let () (collapse (update-atom  &__ (A 2 3) (A 3 4))) (assertEqual (match &__ $x $x) (A 3 4))) ;; FIX: Possibly failing test
 
-;; Test flatten
-!(println! ("testing flatten "))
-!(assertEqual (flatten (AND A (AND A B))) (AND A AND A B))
-!(assertEqual (flatten (AND A (AND (OR A (NOT C)) (OR B D)))) (AND A AND OR A (NOT C) OR B D))
+;; Test flatten-list
+!(println! ("testing flatten-list "))
+!(assertEqual (flatten-list (AND A (AND A B))) (AND A AND A B))
+!(assertEqual (flatten-list (AND A (AND (OR A (NOT C)) (OR B D)))) (AND A AND OR A (NOT C) OR B D))
 
 ;; Test notNt 
 !(bind! NTS (new-state (start expr bop uop term)))
@@ -361,10 +366,11 @@
 !(assertEqual (isValidExp (OR (AND B null) (NOT B)) (start expr bop uop term)) True)
 
 ;; ;; Test for compoase (.)
-;; !(assertEqual ((. not isEven) 4) False)
-;; !(assertEqual ((. isEven (. decrement increment)) 4) True)
-;; !(assertEqual ((. decrement (. increment increment)) 4) 5)
-;; !(assertEqual ((. greaterThanTen (. decrement (. increment increment))) 4) False)
+!(println! ("testing: compose instead of . "))
+!(assertEqual ((compose not isEven) 4) False)
+!(assertEqual ((compose isEven (compose decrement increment)) 4) True)
+!(assertEqual ((compose decrement (compose increment increment)) 4) 5)
+!(assertEqual ((compose greaterThanTen (compose decrement (compose increment increment))) 4) False)
 
 ;; Test for exprToList
 !(println! ("testing exprToList "))
@@ -397,21 +403,23 @@
 ;; !(assertEqual (expToMMap () NilMMap discSpec<=) NilMMap)
 ;;
 ;; ;; Test for swapAndOr
-;; !(assertEqual (swapAndOr AND) OR)
-;; !(assertEqual (swapAndOr OR) AND)
-;; !(assertEqual (swapAndOr A) A)
+!(println! ("testing swapAndOr"))
+!(assertEqual (swapAndOr AND) OR)
+!(assertEqual (swapAndOr OR) AND)
+!(assertEqual (swapAndOr A) A)
 ;;
 ;; ;; Test for compose function
-;; (: inc (-> Number Number) )
-;; (= (inc $x) (+ $x 1))
+(: inc (-> Number Number) )
+(= (inc $x) (+ $x 1))
 ;;
-;; (: dec (-> Number Number) )
-;; (= (dec $x) (- $x 1))
-;;
-;; !(assertEqual ((compose inc dec) 1) 1)
-;; !(assertEqual ((compose (compose inc dec) (compose inc inc)) 1) 3)
-;; !(assertEqual ((compose (compose inc dec) inc) 1) 2)
-;; !(assertEqual ((compose not isZero) 1) True)
+(: dec (-> Number Number) )
+(= (dec $x) (- $x 1))
+
+!(println! ("testing: compose "))
+!(assertEqual (compose inc dec 1) 1)
+!(assertEqual (compose (compose inc dec) (compose inc inc) 1) 3)
+!(assertEqual ((compose (compose inc dec) inc) 1) 2)
+!(assertEqual ((compose not isZero) 1) True)
 
 ;; Test cases -- Aproximate equality
 !(println! ("testing isApproxEq "))
@@ -482,6 +490,8 @@
 ;; --------------------------------
 ;; coll.length — List, Map, MMap, OS, OMS, wrappers
 ;; --------------------------------
+
+!(println! ("coll.length — List, Map, MMap, OS, OMS, wrappers "))
 !(println! ("testing coll.length"))
 !(assertEqual (coll.length (Cons 1 (Cons 2 (Cons 3 Nil)))) 3)
 !(assertEqual (coll.length Nil) 0)
@@ -489,113 +499,124 @@
 ;; --------------------------------
 ;; coll.contains — List, Map, MMap, OS, OMS, wrappers
 ;; --------------------------------
-;; !(println! ("testing coll.contains"))
-;; !(assertEqual (coll.contains (Cons 1 (Cons 2 (Cons 3 Nil))) 2) True)
-;; !(assertEqual (coll.contains (Cons 1 (Cons 2 (Cons 3 Nil))) 4) False)
+!(println! ("testing coll.contains"))
+!(assertEqual (coll.contains (Cons 1 (Cons 2 (Cons 3 Nil))) 2) True)
+!(assertEqual (coll.contains (Cons 1 (Cons 2 (Cons 3 Nil))) 4) False)
 
 ;; ;; --------------------------------
 ;; ;; coll.append/coll.insert — List, Map, MMap, OMS, wrappers; OS => error
 ;; ;; --------------------------------
-;; !(println! ("testing coll.append and coll.remove"))
-;; !(assertEqual (coll.append (Cons 1 (Cons 2 Nil)) 3) (Cons 1 (Cons 2 (Cons 3 Nil))))
-;; !(assertEqual (coll.remove (Cons 1 (Cons 2 (Cons 1 Nil))) 1) (Cons 2 (Cons 1 Nil)))
+!(println! ("testing coll.append and coll.remove"))
+!(assertEqual (coll.append (Cons 1 (Cons 2 Nil)) 3) (Cons 1 (Cons 2 (Cons 3 Nil))))
+!(assertEqual (coll.remove (Cons 1 (Cons 2 (Cons 1 Nil))) 1) (Cons 2 (Cons 1 Nil)))
 
 ;; ;; --------------------------------
 ;; ;; coll.getByIdx — List, Map, MMap, OS, OMS, wrappers
 ;; ;; --------------------------------
-;; !(println! ("testing coll.getByIdx"))
-;; !(assertEqual (coll.getByIdx (Cons 10 (Cons 20 (Cons 30 Nil))) 1) 20)
+!(println! ("testing coll.getByIdx"))
+!(assertEqual (coll.getByIdx (Cons 10 (Cons 20 (Cons 30 Nil))) 1) 20)
 
-;; ;; --------------------------------
-;; ;; Map — keys/values/items/find/getByKey/length/contains
-;; ;; --------------------------------
-;; !(assertEqual (coll.length NilMap) 0)
-;; !(assertEqual (coll.length (ConsMap (1 a) (ConsMap (2 b) NilMap))) 2)
-;; !(assertEqual (coll.contains (ConsMap (1 a) (ConsMap (2 b) NilMap)) 2) True)
-;; !(assertEqual (coll.keys (ConsMap (1 a) (ConsMap (2 b) NilMap))) (Cons 1 (Cons 2 Nil)))
-;; !(assertEqual (coll.values (ConsMap (1 a) (ConsMap (2 b) NilMap))) (Cons a (Cons b Nil)))
-;; !(assertEqual (coll.items (ConsMap (1 a) (ConsMap (2 b) NilMap))) (Cons (1 a) (Cons (2 b) Nil)))
-;; !(assertEqual (coll.getByKey (ConsMap (1 a) (ConsMap (2 b) NilMap)) 2) b)
-;; !(assertEqual (coll.find (ConsMap (1 a) (ConsMap (2 b) NilMap)) 2) 1)
-;; !(assertEqual (coll.append (ConsMap (1 a) NilMap) (2 b)) (ConsMap (1 a) (ConsMap (2 b) NilMap)))
-;; !(assertEqual (coll.remove (ConsMap (1 a) (ConsMap (2 b) NilMap)) 1) (ConsMap (2 b) NilMap))
+;; --------------------------------
+;; Map — keys/values/items/find/getByKey/length/contains
+;; --------------------------------
+!(println! ("testing  coll.length"))
+!(assertEqual (coll.length NilMap) 0)
+!(assertEqual (coll.length (ConsMap (1 a) (ConsMap (2 b) NilMap))) 2)
 
-;; ;; --------------------------------
-;; ;; MultiMap — findOne/findAll/length/contains
-;; ;; --------------------------------
-;; !(println! ("testing coll.length"))
-;; !(assertEqual (coll.length NilMMap) 0)
-;; !(assertEqual (coll.length (ConsMMap (1 a) (ConsMMap (2 b) NilMMap))) 2)
-;; !(assertEqual (coll.contains (ConsMMap (1 a) (ConsMMap (2 b) NilMMap)) 2) True)
-;; !(assertEqual (coll.findOne (ConsMMap (1 a) (ConsMMap (2 b) (ConsMMap (2 c) NilMMap))) 2) b)
-;; !(assertEqual (coll.findAll (ConsMMap (1 a) (ConsMMap (2 b) (ConsMMap (2 c) NilMMap))) 2) (Cons b (Cons c Nil)))
-;; !(assertEqual (coll.append (ConsMMap (1 a) NilMMap) (2 b)) (ConsMMap (1 a) (ConsMMap (2 b) NilMMap)))
-;; !(assertEqual (coll.remove (ConsMMap (1 a) (ConsMMap (2 b) NilMMap)) 2) (ConsMMap (1 a) NilMMap))
+!(assertEqual (coll.contains (ConsMap (1 a) (ConsMap (2 b) NilMap)) 2) True)
+!(assertEqual (coll.keys (ConsMap (1 a) (ConsMap (2 b) NilMap))) (Cons 1 (Cons 2 Nil)))
+!(assertEqual (coll.values (ConsMap (1 a) (ConsMap (2 b) NilMap))) (Cons a (Cons b Nil)))
+!(assertEqual (coll.items (ConsMap (1 a) (ConsMap (2 b) NilMap))) (Cons (1 a) (Cons (2 b) Nil)))
+!(assertEqual (coll.getByKey (ConsMap (1 a) (ConsMap (2 b) NilMap)) 2) b)
+!(assertEqual (coll.find (ConsMap (1 a) (ConsMap (2 b) NilMap)) 2) 1)
+!(assertEqual (coll.append (ConsMap (1 a) NilMap) (2 b)) (ConsMap (1 a) (ConsMap (2 b) NilMap)))
+!(assertEqual (coll.remove (ConsMap (1 a) (ConsMap (2 b) NilMap)) 1) (ConsMap (2 b) NilMap))
+
+;; --------------------------------
+;; MultiMap — findOne/findAll/length/contains
+;; --------------------------------
+!(println! ("testing coll.length"))
+!(assertEqual (coll.length NilMMap) 0)
+!(assertEqual (coll.length (ConsMMap (1 a) (ConsMMap (2 b) NilMMap))) 2)
+!(assertEqual (coll.contains (ConsMMap (1 a) (ConsMMap (2 b) NilMMap)) 2) True)
+!(assertEqual (coll.findOne (ConsMMap (1 a) (ConsMMap (2 b) (ConsMMap (2 c) NilMMap))) 2) b)
+!(assertEqual (coll.findAll (ConsMMap (1 a) (ConsMMap (2 b) (ConsMMap (2 c) NilMMap))) 2) (Cons b (Cons c Nil)))
+!(assertEqual (coll.append (ConsMMap (1 a) NilMMap) (2 b)) (ConsMMap (1 a) (ConsMMap (2 b) NilMMap)))
+!(assertEqual (coll.remove (ConsMMap (1 a) (ConsMMap (2 b) NilMMap)) 2) (ConsMMap (1 a) NilMMap))
 
 ;; ;; --------------------------------
 ;; ;; OrderedSet — contains/getByIdx/removeByIdx/takeN
 ;; ;; --------------------------------
-;; !(println! ("testing coll.length "))
-;; !(assertEqual (coll.length NilOS) 0)
-;; !(assertEqual (coll.append NilOS 1) (Error (NilOS 1) "Use OS.insert with comparator"))
-;; !(assertEqual (coll.contains (ConsOS 1 (ConsOS 2 NilOS)) 2) True)
-;; !(assertEqual (coll.getByIdx (ConsOS 1 (ConsOS 2 NilOS)) 1) 2)
-;; !(assertEqual (coll.removeByIdx (ConsOS 1 (ConsOS 2 NilOS)) 0) (ConsOS 2 NilOS))
-;; !(assertEqual (coll.takeN 1 (ConsOS 5 (ConsOS 4 NilOS))) (OS.getTopN 1 (ConsOS 5 (ConsOS 4 NilOS))))
+!(println! ("testing coll.length "))
+!(assertEqual (coll.length NilOS) 0)
+!(assertEqual (coll.append NilOS 1) (Error (NilOS 1) "Use OS.insert with comparator"))
+!(assertEqual (coll.contains (ConsOS 1 (ConsOS 2 NilOS)) 2) True)
+!(assertEqual (coll.getByIdx (ConsOS 1 (ConsOS 2 NilOS)) 1) 2)
+!(assertEqual (coll.removeByIdx (ConsOS 1 (ConsOS 2 NilOS)) 0) (ConsOS 2 NilOS))
+!(assertEqual (coll.takeN 1 (ConsOS 5 (ConsOS 4 NilOS))) (OS.getTopN 1 (ConsOS 5 (ConsOS 4 NilOS))))
 
 ;; ;; --------------------------------
-;; ;; OrderedMultiset — length/append/contains/getByIdx/remove
-;; ;; --------------------------------
-;; !(assertEqual (coll.length NilOMS) 0)
-;; !(assertEqual (coll.append NilOMS 3) (ConsOMS 3 NilOMS))
-;; !(assertEqual (coll.contains (ConsOMS 1 (ConsOMS 2 NilOMS)) 2) True)
-;; !(assertEqual (coll.getByIdx (ConsOMS 1 (ConsOMS 2 NilOMS)) 0) 1)
-;; !(assertEqual (coll.remove (ConsOMS 1 (ConsOMS 2 NilOMS)) 1) (ConsOMS 2 NilOMS))
+;; OrderedMultiset — length/append/contains/getByIdx/remove
+;; --------------------------------
 
-;; ;; Cscore comparisons via apply (inline mkCscore)
-;; !(assertEqual
-;;   (apply >= (mkCscore -2.0 3.0 1.0 0.5 -3.5)
-;;                (mkCscore -3.0 2.0 1.0 0.5 -4.5))
-;;   True)
-;; !(assertEqual
-;;   (apply <  (mkCscore -3.0 2.0 1.0 0.5 -4.5)
-;;                (mkCscore -2.0 3.0 1.0 0.5 -3.5))
-;;   True)
+!(assertEqual (coll.length NilOMS) 0)
+!(assertEqual (coll.append NilOMS 3) (ConsOMS 3 NilOMS))
+!(assertEqual (coll.contains (ConsOMS 1 (ConsOMS 2 NilOMS)) 2) True)
+!(assertEqual (coll.getByIdx (ConsOMS 1 (ConsOMS 2 NilOMS)) 0) 1)
+!(assertEqual (coll.remove (ConsOMS 1 (ConsOMS 2 NilOMS)) 1) (ConsOMS 2 NilOMS))
 
-;; ;; Tie-breaker on complexity: equal pen score but lower complexity is greater
-;; !(assertEqual
-;;   (apply >= (mkCscore -2.0 2.0 1.0 0.5 -3.5)
-;;                (mkCscore -2.0 3.0 1.0 0.5 -3.5))
-;;   True)
-;; !(assertEqual
-;;   (apply <  (mkCscore -2.0 2.0 1.0 0.5 -3.5)
-;;                (mkCscore -2.0 3.0 1.0 0.5 -3.5))
-;;   False)
+;; Cscore comparisons via apply (inline mkCscore)
+!(println! ("apply >="))
+!(assertEqual
+  (apply >= (mkCscore -2.0 3.0 1.0 0.5 -3.5)
+               (mkCscore -3.0 2.0 1.0 0.5 -4.5))
+  True)
+!(println! ("apply <"))
+!(assertEqual
+  (apply <  (mkCscore -3.0 2.0 1.0 0.5 -4.5)
+               (mkCscore -2.0 3.0 1.0 0.5 -3.5))
+  True)
 
-;; ;; NaN penalized score ordering: NaN should be treated as very low
-;; !(assertEqual
-;;   (apply >= (mkCscore -2.0 3.0 1.0 0.5 -3.5)
-;;                (mkCscore -1.0 2.0 1.0 0.5 1.5NaN))
-;;   True)
-;; !(assertEqual
-;;   (apply <  (mkCscore -1.0 2.0 1.0 0.5 1.5NaN)
-;;                (mkCscore -2.0 3.0 1.0 0.5 -3.5))
-;;   True)
+;; Tie-breaker on complexity: equal pen score but lower complexity is greater
+!(println! ("apply >="))
+!(assertEqual
+  (apply >= (mkCscore -2.0 2.0 1.0 0.5 -3.5)
+               (mkCscore -2.0 3.0 1.0 0.5 -3.5))
+  True)
+  !(println! ("apply <"))
+!(assertEqual
+  (apply <  (mkCscore -2.0 2.0 1.0 0.5 -3.5)
+               (mkCscore -2.0 3.0 1.0 0.5 -3.5))
+  False)
 
-;; ;; Approximate equality for Cscore via apply == (inline)
-;; !(assertEqual
-;;   (apply == (mkCscore 1.0000005 2.0 0.0 0.0 0.5)
-;;                (mkCscore 1.0000006 2.0 0.0 0.0 0.5))
-;;   True)
+;; NaN penalized score ordering: NaN should be treated as very low
 
-;; ;; ScoredInstance comparisons via apply should project to inner Cscore (inline)
-;; !(assertEqual
-;;   (apply >=
-;;     (mkSInst (mkPair (mkInst (Cons 1 (Cons 2 Nil))) (mkCscore -2.0 3.0 1.0 0.5 -3.5)))
-;;     (mkSInst (mkPair (mkInst (Cons 3 Nil))               (mkCscore -3.0 2.0 1.0 0.5 -4.5))))
-;;   True)
+!(println! ("apply >="))
+!(assertEqual
+  (apply >= (mkCscore -2.0 3.0 1.0 0.5 -3.5)
+               (mkCscore -1.0 2.0 1.0 0.5 1.5NaN))
+  True)
+(println! ("apply <"))
+!(assertEqual
+  (apply <  (mkCscore -1.0 2.0 1.0 0.5 1.5NaN)
+               (mkCscore -2.0 3.0 1.0 0.5 -3.5))
+  True)
+
+;; Approximate equality for Cscore via apply == (inline)
+(println! ("apply =="))
+!(assertEqual
+  (apply == (mkCscore 1.0000005 2.0 0.0 0.0 0.5)
+               (mkCscore 1.0000006 2.0 0.0 0.0 0.5))
+  True)
+
+;; ScoredInstance comparisons via apply should project to inner Cscore (inline)
+!(assertEqual
+  (apply >=
+    (mkSInst (mkPair (mkInst (Cons 1 (Cons 2 Nil))) (mkCscore -2.0 3.0 1.0 0.5 -3.5)))
+    (mkSInst (mkPair (mkInst (Cons 3 Nil))               (mkCscore -3.0 2.0 1.0 0.5 -4.5))))
+  True)
 
 
-;; ;; Test cases -- updateID
-;; !(assertEqual (updateID (mkNodeId (0 1 2))) (mkNodeId (1 2)))
-;; !(assertEqual (updateID (mkNodeId (1 2 3))) (mkNodeId (1 2 3)))
+;; Test cases -- updateID
+!(assertEqual (updateID (mkNodeId (0 1 2))) (mkNodeId (1 2)))
+!(assertEqual (updateID (mkNodeId (1 2 3))) (mkNodeId (1 2 3)))
