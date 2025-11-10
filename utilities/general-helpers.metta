@@ -1248,17 +1248,17 @@
    (match-types $type1 $type2 True $value))
 
 ;; This helper function is intended for custom type constructors and functions
-; (= (get-type-reduce $obj)
-;     (if (is-expr $obj)
-;         (let*
-;             (
-;                 (($h $t) (decons-atom $obj))
-;                 ($constructor (car-atom (reverse (get-type $h))))
-;                 ($hc (car-atom $constructor))
-;                 ($t2 (collapse (get-type (superpose $t))))
-;             )
-;             (cons $hc $t2)
-;         )
-;         (car-atom (reverse (get-type $obj)))
-;     )
-; )
+(= (get-type-reduce $obj)
+    (if (is-expr $obj)
+        (let*
+            (
+                (($h $t) (decons-atom $obj))
+                ($constructor (car-atom (reverse (get-type $h))))
+                ($hc (car-atom $constructor))
+                ($t2 (collapse (get-type (superpose $t))))
+            )
+            (cons $hc $t2)
+        )
+        (car-atom (reverse (get-type $obj)))
+    )
+)
