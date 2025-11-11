@@ -192,7 +192,7 @@
 ;;   - $x: The atom to which the predicate is applied.
 ;; Returns:
 ;;   - Expression: Returns the atom if the predicate evaluates to true, otherwise returns an empty expression.
-(:wrapper (-> (-> $a Bool) $aa $aa))
+; (:wrapper (-> (-> $a Bool) $aa $aa))
 (= (wrapper $predicate $x) (if (let $bool ($predicate $x) $bool) $x ()))
 
 ;; Filter function given a predicate ;; FIX: No longer working on version 0.2.3
@@ -713,8 +713,8 @@
 (if (== $tail ()) $updatedMap (expToMMap $tail $updatedMap $compFunc))))
 
 ;; A trick function to make chain reduce when using union-atom
-(: (-> unionAtom (-> Expression Expression Expression)))
-; (= (unionAtom $x $y) (union-atom $x $y))
+; (: (-> unionAtom (-> Expression Expression Expression)))
+(= (unionAtom $x $y) (union-atom $x $y))
 (= (unionAtom $a $b) 
     (if-decons-expr-custom $a $head $tail
         (chain (unionAtom $tail $b) $rest
@@ -1134,7 +1134,7 @@
 (= (coll.getTopN $n NilOS) (Error NilOS "empty ordered set/ fewer items than required"))
 (= (coll.getTopN $n (ConsOS $x $xs)) (eval (OS.getTopN $n (ConsOS $x $xs))))
 ;; helper function to remove leading zeros from a node id
-(: updateID (-> ($a $b) ($a $b)))
+; (: updateID (-> ($a $b) ($a $b)))
 (= (updateID (mkNodeId $id)) 
     (if (== (car-atom $id) 0)
         (mkNodeId (cdr-atom $id))
@@ -1145,7 +1145,7 @@
 ; this is to replace the built-in if-decons-expr which will depricate in future on mettalog
 ; it is used to deconstruct an expression into head and tail and then use them in the then expression
 ; if the expression is empty it will use the else expression
-(: if-decons-expr-custom (-> Expression %Undefined% %Undefined% Expression Expression Expression)) 
+(: if-decons-expr-custom (-> Expression %Undefined% %Undefined% Expression Expression %Undefined%))
 (= (if-decons-expr-custom $list $h $t $then $else)
       (if (or (== $list ()) (not (== (get-metatype $list) Expression)))
             $else
@@ -1194,6 +1194,13 @@
    (assert (=alpha $A $B)))
 
 (: unify (-> Expression Expression Expression Expression %Undefined%))
+(= (unify $space $pattern $then $else)
+   (if (is-space $space)
+       (let $temp (cut)
+            (case (match $space $pattern $pattern)
+                  (($pattern $then)
+                   (Empty $else)))) (empty)))
+
 (= (unify $a $b $then $else)
    (if (= $a $b)
        (eval $then)
