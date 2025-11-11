@@ -1128,6 +1128,7 @@
 
     ))
 
+
 ; this is to replace the built-in if-decons-expr which will depricate in future on mettalog
 ; it is used to deconstruct an expression into head and tail and then use them in the then expression
 ; if the expression is empty it will use the else expression
@@ -1142,3 +1143,18 @@
                   $then
             )
             ))
+
+; Returns a random integer (0, 1, or 2) biased toward 0.
+; ~50% chance to return 0, otherwise randomly 1 or 2.
+(: biasedRandomInt (-> Number))
+(= (biasedRandomInt)
+   (if (== (random-int 0 2) 0)  ; 50% chance
+       0
+       (random-int 1 3)))      ; 1 or 2
+
+; Custom implementation of the ceiling function
+; Param: $num – the input number (may be fractional)
+; Returns: The smallest integer greater than or equal to $num.
+; (: ceilMath (-> Number Number))
+(= (ceilMath $num)
+(+ (floor-math $num) (if (> $num (floor-math $num)) 1 0)))
