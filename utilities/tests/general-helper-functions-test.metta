@@ -19,6 +19,15 @@
 !(assertEqual (~= Something something) True)
 
 
+;; Tests for get-type-reduce
+(: Bar (-> $a $b Type))
+(: Foo (-> $a $b (Bar $a $b)))
+
+!(assertEqual (get-type-reduce Bar) Type)
+!(assertEqual (get-type-reduce (Foo "Chocolate" "Cake")) (Bar String String))
+!(assertEqual (get-type-reduce (Foo 1 2)) (Bar Number Number))
+!(assertEqual (get-type-reduce (Foo 1 "2")) (Bar Number String))
+
 ;; Tests for the function 'concatTuple' ;; FIX: Failing Test case
 !(println! ("test appending instead of concat touples"))
 !(assertEqual (append () (3 4)) (3 4))
@@ -227,14 +236,20 @@
 !(assertEqual (union-atom (0) (1 2)) (0 1 2))
 !(assertEqual (union-atom (0 1) (2 3)) (0 1 2 3))
 
-!(println! ("testig: max "))
+!(println! ("testing: max "))
 !(assertEqual (max 1 2) 2)
 !(assertEqual (max 2 4) 4)
 
 ;; FIX: Failing Test case
+
 !(assertEqual (println! ("testing failing case in gen it's working ✅")))
 !(assertEqual (gen 1 (0)) (1 0))
 !(assertEqual (gen 3 (0)) (3 2 1 0))
+
+; !(assertEqual (println! ("testing failing case in gen it's working ✅")))
+; !(assertEqual (gen 1 (0)) (1 0))
+; !(assertEqual (gen 3 (0)) (3 2 1 0))
+
 !(println! ("testig: decons "))
 !(assertEqual (decons (A B C)) (A (B C)))
 !(assertEqual (decons (A)) (A ()))
@@ -627,3 +642,4 @@
 (hello world)
 !(assertEqual (unify &self (hello world) Yes No) Yes)
 !(assertEqual (unify &self (hello dream) Yes No) No)
+
