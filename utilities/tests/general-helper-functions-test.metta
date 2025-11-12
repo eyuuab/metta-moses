@@ -18,6 +18,7 @@
 !(assertEqual (~= Something Something) False)
 !(assertEqual (~= Something something) True)
 
+
 ;; Tests for the function 'concatTuple' ;; FIX: Failing Test case
 !(println! ("test appending instead of concat touples"))
 !(assertEqual (append () (3 4)) (3 4))
@@ -620,3 +621,9 @@
 ;; Test cases -- updateID
 !(assertEqual (updateID (mkNodeId (0 1 2))) (mkNodeId (1 2)))
 !(assertEqual (updateID (mkNodeId (1 2 3))) (mkNodeId (1 2 3)))
+
+; test case for unify in space manipulation.
+!(println! ("testing: unify"))
+(hello world)
+!(assertEqual (unify &self (hello world) Yes No) Yes)
+!(assertEqual (unify &self (hello dream) Yes No) No)
