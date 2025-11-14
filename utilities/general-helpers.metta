@@ -216,7 +216,7 @@
 ; ;; Example: input ==> (True True False), output ==> True
 ; ;;          input ==> (False False False), output ==> False
 ; ;;          input ==> (False True False), output ==> True
-(: any (-> Atom Bool))
+; (: any (-> Atom Bool))
 (= (any $bools) (is-member True $bools))
 
 ;; Fix curry is not working in petta 
@@ -713,13 +713,17 @@
 (if (== $tail ()) $updatedMap (expToMMap $tail $updatedMap $compFunc))))
 
 ;; A trick function to make chain reduce when using union-atom
+;; This is causing infinite loop in some cases. use the direct union-atom instead.
 ; (: (-> unionAtom (-> Expression Expression Expression)))
-(= (unionAtom $x $y) (union-atom $x $y))
-(= (unionAtom $a $b) 
-    (if-decons-expr-custom $a $head $tail
-        (chain (unionAtom $tail $b) $rest
-            (cons-atom $head $rest))
-        $b))
+; (= (unionAtom $x $y) (union-atom $x $y))
+; (= (unionAtom $a $b)
+;     (if-decons-expr-custom $a $head $tail
+;         ; (trace! ("Done With chain") 
+;         (chain (unionAtom $tail $b) $rest
+;             (cons-atom $head $rest))
+;             ; )
+;         $b)
+; )
 
 ;; helper function to generate list of numbers ranging from 0 to n
 ;; (: genList (-> Number Expression))
