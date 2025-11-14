@@ -1,5 +1,5 @@
 
-! (bind! &space (new-space))
+!(bind! &space (new-space))
 
 (= (removeFromSpace $row $space) (remove-atom $space $row))
 
