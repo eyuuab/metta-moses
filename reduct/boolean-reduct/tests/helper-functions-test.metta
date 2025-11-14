@@ -2,7 +2,7 @@
 !(import! &self ../rte-helpers)
 !(import! &self ../delete-inconsistent-handle)
 !(import! &self ../zero-constraint-subsumption)
-; ; !(import! &self ../cut-unnecessary-or)
+!(import! &self ../cut-unnecessary-or)
 
  ;; Test for getGuardSet
 
@@ -149,6 +149,6 @@
 !(assertEqual (any (False False True False False False False)) True)
 
 ; ;; Test for getSubExpression ;; Not tested because it uses cutUnnecessaryOr
-; !(assertEqual (getSubExpression (NOT A)) ())
-; !(assertEqual (getSubExpression (OR A B (AND C D) (AND E F))) (A B (AND C D) (AND E F)))
-; !(assertEqual (getSubExpression (AND A B (OR C D) (OR E F))) (A B (OR C D) (OR E F)))
+!(assertEqual (getSubExpression (NOT A)) ())
+!(assertEqual (getSubExpression (OR A B (AND C D) (AND E F))) (A B (AND C D) (AND E F)))
+!(assertEqual (getSubExpression (AND A B (OR C D) (OR E F))) (A B (OR C D) (OR E F)))
