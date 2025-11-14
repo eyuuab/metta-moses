@@ -125,11 +125,11 @@
 (= (findAndReplace $old $new $list) ;; FIX: No longer working on version 0.2.3
     ; (let*
     ;   (
-        ; (() (println! ""))
-        ; (() (println! (==> === Inside findAndReplace === <==)))
-        ; (() (println! (Parameters ==> Old: $old New: $new List: $list)))
-        ; (() (println! (Result ==> (collapse (replace $old $new (superpose $list))))))
-        ; (() (println! ""))
+    ;     ($log (println! ""))
+    ;     ($log' (println! (==> === Inside findAndReplace === <==)))
+    ;     ($log'' (println! (Parameters ==> Old: $old New: $new List: $list)))
+    ;     ($log''' (println! (Result ==> (collapse (replace $old $new (superpose $list))))))
+    ;     ($log'''' (println! ""))
     ;   )
       (if (== () (subtraction-atom $old $list)) 
         $new
