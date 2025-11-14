@@ -648,17 +648,18 @@
 (: >>= (-> $a $a Bool))
 (= (>>= ($ctor $x) ($ctor $y))(>= $x $y));; List.Sum for any (List $a) $a of (typeConstructor Number) type
 ;;
-(: List.sum (-> (-> $a $a $a) (List $a) $a))
-(= (List.sum $adder Nil) Nil)
-(= (List.sum $adder (Cons $x $xs))
-    (if (== $xs Nil)
-        $x
-        (let $c (List.sum $adder $xs)
-            ($adder $x $c))))
+;; the following is defined in list-methods.metta as well
+; (: List.sum (-> (-> $a $a $a) (List $a) $a))
+; (= (List.sum $adder Nil) Nil)
+; (= (List.sum $adder (Cons $x $xs))
+;     (if (== $xs Nil)
+;         $x
+;         (let $c (List.sum $adder $xs)
+;             ($adder $x $c))))
 
-; ;; overloading the above function to work with list of numbers
-; (: List.sum (-> (List $a) $a))
-(= (List.sum $list) (List.sum + $list))
+; ; ;; overloading the above function to work with list of numbers
+; ; (: List.sum (-> (List $a) $a))
+; (= (List.sum $list) (List.sum + $list))
 
 ;; A function to take any two types which have the same constructor and add them.
 ;;   params: ($ctor $a): The first argument with a constructor $ctor
@@ -750,7 +751,7 @@
 ;; approximate equality -- takes the relative magnitude of the numbers into consideration
 
 !(bind! EPSILON (new-state (pow-math 10 -6))) ;in petta to bind some constant like this we need to do it by new-state function and  to retrieve get-state function
-(: isApproxEq (-> Number Number Bool))
+; (: isApproxEq (-> Number Number Bool))
 (= (isApproxEq $x $y)
     (let $diff (abs-math (- $x $y))
         (if (< $diff (get-state EPSILON))
@@ -827,13 +828,13 @@
 ;; - Cscore -> KPair(penScore, -complexity) with NaN mapped to low sentinel
 ;; - ScoredInstance/Exemplar variants -> delegate to inner Cscore
 ;; - Default -> KScalar(x) (works for Number and other simple types)
-(: key-of (-> $a $k)) ;; NOTE: Renamed from 'key' to 'key-of' for PeTTa compatibility. builtin function naming conflict with internal compilation in prolog
+; (: key-of (-> $a $k)) ;; NOTE: Renamed from 'key' to 'key-of' for PeTTa compatibility. builtin function naming conflict with internal compilation in prolog
 (= (key-of $x)
    (case $x
      (
        ;; 5-field Cscore (scoring/cscore.metta)
        ((mkCscore $scor $cpxy $cpxyPen $uniPen $penScore)
-        (let $p (if (isnan $penScore) (* -1 (pow-math 10 308)) $penScore)
+        (let $p (if (isnan-math $penScore) (* -1 (pow-math 10 308)) $penScore)
              (KPair $p (* -1 $cpxy))))
        ((mkSInst (mkPair $inst $score))
          (key-of $score))
@@ -1215,9 +1216,15 @@
          (add-atom $space (= $head $bodyreduced))))
 
 ;Error Handling
+; (= (if-error $X $A $B)
+;    (if (== (car-atom $X) Error) 
+;        $A $B))
+
 (= (if-error $X $A $B)
-   (if (== (car-atom $X) Error) 
-       $A $B))
+    (if (or (== (get-metatype $X) Grounded) (== (get-metatype $X) Symbol))
+        $B
+        (if (== (car-atom $X) Error) 
+            $A $B)))       
 
 (= (return-on-error $result $B)
    (if-error $result
