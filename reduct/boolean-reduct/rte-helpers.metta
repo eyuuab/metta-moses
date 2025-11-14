@@ -16,11 +16,11 @@
 (= (getGuardSet $exp)
    (if (== (get-metatype $exp) Expression)
     (let ($h $t) (decons-atom $exp)
-      (if-decons-expr-custom $exp $h $t
+      (eval (if-decons-expr-custom $exp $h $t
           (if (== $h OR)
               ()               
               (getLiterals $exp))
-          $exp)
+          $exp))
     )
     $exp)
 )
@@ -86,8 +86,8 @@
      (
         ($op (car-atom $exp))
         ($oldChildren (getChildrenExp $exp))
-        ($newChildren (concatTuple $oldChildren $children))
-        ($updatedSubExpression (concatTuple (getLiterals $exp) $newChildren))
+        ($newChildren (eval (concatTuple $oldChildren $children)))
+        ($updatedSubExpression (eval (concatTuple (getLiterals $exp) $newChildren)))
         ($newExp (cons-atom $op $updatedSubExpression))
         
         ; (() (println! (OldChildren: $oldChildren)))

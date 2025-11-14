@@ -13,23 +13,26 @@
 ;;            whether the transformation function is applied or not.
 ;; Example: input: POA ==> (AND (OR (AND B D) (NOT E))), parent ==> (OR C (AND (OR (AND B D) (NOT E))))
 ;;          output: ((OR C (AND B D) (NOT E)) () True)
-(: andCut (-> Expression Expression (Expression Expression Bool)))
+; (: andCut (-> Expression Expression (Expression Expression Bool)))
 (= (andCut $parent $current)
         (let*
           (
-              ; (() (println! (===Inside AndCut===)))
-              ; (() (println! (Current $current : Parent : $parent)))
+              ; ($log (println! (===Inside AndCut===)))
+              ; ($log' (println! (Current $current : Parent : $parent)))
               ($parentSec (collapse (removeEmptyAND (superpose $parent))))
               ($currentSec (if (=== $parent $current) $parentSec (collapse (removeEmptyAND (superpose $current)))))
               (($guardSet $child) (getLiteralChildren $currentSec))
-              ($tail (if-decons-expr-custom $child $h $t (cdr-atom $child) "No child"))
+              (($h $t) (if (== (get-metatype $child) Expression) (decons-atom $child) (() ())))
+              ($then (cdr-atom $child))
+              ($tail (if-decons-expr-custom $child $h $t $then "No child"))
+              ; ($log (println! ("Tail: " $tail)))
           )
           (if (and (== $tail ()) (== $guardSet ())) ;; Has no guardSet and has single child
               (let*
                   (
-                      ; (() (println! (===Inside AndCut===)))
-                      ; (() (println! (Current $current : Parent : $parent)))
-                      ($childFirst (if-decons-expr-custom $child $h $t $h (empty)))
+                      ; ($log (println! (===Inside AndCut===)))
+                      ; ($log' (println! (Current $current : Parent : $parent)))
+                      ($childFirst (if-decons-expr-custom $child $h $t $h ()))
                       (($grandLiterals $grandChildren) (getLiteralChildren $childFirst))
                       ($allLiterals (collapse (getGuardSet (superpose $grandChildren))))
                       ($common (intersections $allLiterals))
@@ -40,15 +43,15 @@
                                         (addChildren $updatedParent $grandChildren)))
                       ($updatedParent'' (addLiterals $updatedParent' $grandLiterals))
 
-                      ; (() (println! (=== Inside AndCut Log ===)))
-                      ; (() (println! (All Literals: $allLiterals)))
-                      ; (() (println! (GrandChildren: $grandChildren : GrandLiterals: $grandLiterals)))
-                      ; (() (println! (UpdatedParent: $updatedParent : UpdatedParent': $updatedParent' )))
-                      ; (() (println! (UpdatedParent'': $updatedParent'' )))
-                      ; (() (println! (ChildFirst: $childFirst)))
-                      ; (() (println! (Child: $child)))
-                      ; (() (println! (AllLiterals: $allLiterals)))
-                      ; (() (println! (Common: $common)))
+                      ; ($l (println! (===Inside AndCut Log===)))
+                      ; ($l (println! (All Literals: $allLiterals)))
+                      ; ($l (println! (GrandChildren: $grandChildren : GrandLiterals: $grandLiterals)))
+                      ; ($l (println! (UpdatedParent: $updatedParent : UpdatedParent': $updatedParent' )))
+                      ; ($l (println! (UpdatedParent'': $updatedParent'' )))
+                      ; ($l (println! (ChildFirst: $childFirst)))
+                      ; ($l (println! (Child: $child)))
+                      ; ($l (println! (AllLiterals: $allLiterals)))
+                      ; ($l (println! (Common: $common)))
 
                   )
                   (if (== $common ())
@@ -62,7 +65,7 @@
 )
 
 ;; Function to find intersections between all literals in a nested tuple
-(: intersections (-> Expression Expression))
+; (: intersections (-> Expression Expression))
 (= (intersections $nestedTuple)
    (case $nestedTuple 
      ((() $nestedTuple)
@@ -78,7 +81,7 @@
 
 ;; A helper function used to apply andCut in the until function.
 ;; This function keeps the state of the until function updated for a single function application.
-(: applyAndCut (-> (Expression Bool (Expression Expression)) (Expression Bool (Expression Expression))))
+; (: applyAndCut (-> (Expression Bool (Expression Expression)) (Expression Bool (Expression Expression))))
 (= (applyAndCut ($parent $bool ($child $remainingChildren)))
       (let*
         (
