@@ -610,11 +610,11 @@
 !(println! ("apply >="))
 !(assertEqual
   (apply >= (mkCscore -2.0 3.0 1.0 0.5 -3.5)
-               (mkCscore -1.0 2.0 1.0 0.5 1.5NaN))
+               (mkCscore -1.0 2.0 1.0 0.5 nan))
   True)
 (println! ("apply <"))
 !(assertEqual
-  (apply <  (mkCscore -1.0 2.0 1.0 0.5 1.5NaN)
+  (apply <  (mkCscore -1.0 2.0 1.0 0.5 nan)
                (mkCscore -2.0 3.0 1.0 0.5 -3.5))
   True)
 
