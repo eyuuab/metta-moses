@@ -1,8 +1,8 @@
 !(import! &self ../../../utilities/general-helpers)
 !(import! &self ../rte-helpers)
-; !(import! &self ../delete-inconsistent-handle)
+!(import! &self ../delete-inconsistent-handle)
 !(import! &self ../zero-constraint-subsumption)
-; !(import! &self ../cut-unnecessary-or)
+; ; !(import! &self ../cut-unnecessary-or)
 
  ;; Test for getGuardSet
 
@@ -47,16 +47,16 @@
 !(assertEqual (collapse (getGuardSetND (AND (NOT A) A B))) ((NOT A) A B))
 
 ;; Test for isConsistentExp ;; Not Tested because it uses deleteInconsistentHandle
-; !(assertEqual (isConsistentExp ()) (True))
-; !(assertEqual (isConsistentExp A) (True))
-; !(assertEqual (isConsistentExp (A)) (True))
-; !(assertEqual (isConsistentExp (AND)) (True))
-; !(assertEqual (isConsistentExp (AND (OR A B) (AND A B) A B)) (True))
-; !(assertEqual (isConsistentExp (AND (NOT A) (NOT B) A)) (False))
-; !(assertEqual (isConsistentExp (AND A B (NOT B))) (False))
-; !(assertEqual (isConsistentExp (OR A B (NOT A))) (False))
-; !(assertEqual (isConsistentExp (OR (AND A B) (AND A B) (NOT A))) (True))
-; !(assertEqual (isConsistentExp (AND A (NOT A) (NOT B))) (False))
+!(assertEqual (isConsistentExp ()) True)
+!(assertEqual (isConsistentExp A) True)
+!(assertEqual (isConsistentExp (A)) True)
+!(assertEqual (isConsistentExp (AND)) True)
+!(assertEqual (isConsistentExp (AND (OR A B) (AND A B) A B)) True)
+!(assertEqual (isConsistentExp (AND (NOT A) (NOT B) A)) False)
+!(assertEqual (isConsistentExp (AND A B (NOT B))) False)
+!(assertEqual (isConsistentExp (OR A B (NOT A))) False)
+!(assertEqual (isConsistentExp (OR (AND A B) (AND A B) (NOT A))) True)
+!(assertEqual (isConsistentExp (AND A (NOT A) (NOT B))) False)
 
 !(assertEqual (nodeHasChildOrGuard (AND A B)) True)
 !(assertEqual (nodeHasChildOrGuard (AND A B C)) True)
