@@ -6,21 +6,21 @@
 (: NullVertex (Tree $a))
 (: mkNullVex (-> (List (Tree $a)) (Tree $a)))
 
-(: getNodeValue (-> (Tree $a) (Node $a)))
+;;(: getNodeValue (-> (Tree $a) (Node $a)))
 (= (getNodeValue (mkNullVex $xs)) (Error (mkNullVex $xs) "Null Vertex has no value"))
 (= (getNodeValue (mkTree $nodeValue $chl)) $nodeValue)
 
-(: getChildren (-> (Tree $a) (List (Tree $a))))
+;;(: getChildren (-> (Tree $a) (List (Tree $a))))
 (= (getChildren (mkTree (mkNode $r) $children)) $children)
 (= (getChildren (mkNullVex $children)) $children)
 
-(: updateChildren (-> (Tree $a) (List (Tree $a)) (Tree $a)))
+;;(: updateChildren (-> (Tree $a) (List (Tree $a)) (Tree $a)))
 (= (updateChildren (mkTree (mkNode $r) $oldChildren) $newChildren)
    (mkTree (mkNode $r) $newChildren))
 (= (updateChildren (mkNullVex $oldChildren) $newChildren)
    (mkNullVex $newChildren))
 
-(: preOrder (-> (Tree $a) $a))
+;;(: preOrder (-> (Tree $a) $a))
 (= (preOrder (mkTree (mkNode $r) Nil)) $r)
 (= (preOrder (mkNullVex $knobs)) ())
 (= (preOrder (mkTree (mkNode $r) (Cons $x $xs)))
@@ -35,7 +35,7 @@
          $exp)
 )
 
-(: buildTree (-> $a (Tree $a)))
+;;(: buildTree (-> $a (Tree $a)))
 (= (buildTree $expr)
         (if (== (get-metatype $expr) Expression)
             ; (let ($head $tail) (decons-atom $expr)
@@ -55,7 +55,7 @@
         )
             )
 
-(: cleanTree (-> (Tree $a) (Tree $a)))
+;;(: cleanTree (-> (Tree $a) (Tree $a)))
 (= (cleanTree $tree)
     (let*
         (
@@ -75,8 +75,8 @@
 ;;   $targetTree: The target tree to find the ID of.
 ;; Returns:
 ;;   NodeId: The id of the targetTree if found.
-(: getNodeId (-> (Tree $a) (Tree $a) NodeId))
-(: getNodeId (-> (Tree $a) (Tree $a) NodeId NodeId))
+;;(: getNodeId (-> (Tree $a) (Tree $a) NodeId))
+;;(: getNodeId (-> (Tree $a) (Tree $a) NodeId NodeId))
 (= (getNodeId $tree $targetTree) (getNodeId $tree $targetTree (mkNodeId (0))))
 (= (getNodeId $tree $targetTree (mkNodeId $parentIdx))
     (if (== $tree $targetTree)
@@ -93,7 +93,7 @@
 ;; Helper function for the getNodeId function.
 ;;   The function's sole purpose is to make the
 ;;   getNodeById compatible for the foldr function call.
-(: applyGetNodeId (-> (Tree $a) ((Tree $a) NodeId NodeId Number) ((Tree $a) NodeId NodeId Number)))
+;;(: applyGetNodeId (-> (Tree $a) ((Tree $a) NodeId NodeId Number) ((Tree $a) NodeId NodeId Number)))
 (= (applyGetNodeId $currTree ($targetTree (mkNodeId $parentIdx) $accId $iter))
     (if (== $accId (mkNodeId (-1)))
         (chain (getNodeId $currTree $targetTree (mkNodeId ($iter))) $nodeId
@@ -112,7 +112,7 @@
 ;;   $iter: - index to check children, increments recursively.
 ;; Returns:
 ;;   NodeId - The NodeId of the Subtree
-(: getSubtreeId (-> (Tree $a) NodeId (Tree $a) Number NodeId))
+;;(: getSubtreeId (-> (Tree $a) NodeId (Tree $a) Number NodeId))
 (= (getSubtreeId $tree (mkNodeId $targetId) $subtree $iter)
    (let*
      (
@@ -135,7 +135,7 @@
 ;;   $id: - ID of the target node.
 ;; Returns:
 ;;   (List (Tree $a)) - The list of children of the target node.
-(: getChildrenById (-> (Tree $a) NodeId (List (Tree $a))))
+;;(: getChildrenById (-> (Tree $a) NodeId (List (Tree $a))))
 (= (getChildrenById $tree (mkNodeId $id))
    (let $targetNode (getNodeById $tree (mkNodeId $id))
      (getChildren $targetNode)))
@@ -146,7 +146,7 @@
 ;;   $node: - The new node to become the root, wrapping $tree.
 ;; Returns:
 ;;   (Tree $a) - A new mkTree with $node as the root and $tree as its only child.
-(: insertAbove (-> (Tree $a) (Node $n) (Tree $a)))
+;;(: insertAbove (-> (Tree $a) (Node $n) (Tree $a)))
 (= (insertAbove $tree $node)
    (mkTree $node (Cons $tree Nil))
 )
@@ -158,7 +158,7 @@
 ;;   $newSubtree: - The new subtree to insert.
 ;; Returns:
 ;;   (Tree $a) - The updated tree with $newSubtree at $id.
-(: replaceNodeById (-> (Tree $a) NodeId (Tree $a) (Tree $a)))
+;;(: replaceNodeById (-> (Tree $a) NodeId (Tree $a) (Tree $a)))
 (= (replaceNodeById $tree (mkNodeId $id) $newSubtree)
 
    ;; If no more id or targetTree is root.
@@ -184,7 +184,7 @@
 ;;   $child: - The new child to append.
 ;; Returns:
 ;;   ((Tree $a) NodeId) - Tuple of updated tree and NodeId of the new child.
-(: appendChild (-> (Tree $a) NodeId (Tree $a) ((Tree $a) NodeId)))
+;;(: appendChild (-> (Tree $a) NodeId (Tree $a) ((Tree $a) NodeId)))
 (= (appendChild (mkNullVex Nil) $targetId $child) ($child (mkNodeId (0))))
 (= (appendChild (mkNullVex (Cons $x $xs)) $targetId $child) (Error (mkNullVex (Cons $x $xs)) "Null vertex can't have more than one child"))
 (= (appendChild (mkTree $node $children) (mkNodeId $target) $child)
@@ -208,14 +208,14 @@
     ($updatedTree (mkNodeId $idOfChild))))
 
 ;; getChildrenByIdx -- retrieve children of a tree using index values
-(: getChildrenByIdx (-> (Tree $a) Number (List (Tree $a))))
+;;(: getChildrenByIdx (-> (Tree $a) Number (List (Tree $a))))
 (= (getChildrenByIdx $tree $idx)
         (case $tree
             (((mkTree (mkNode $r) $childrenTgt) (List.getByIdx $childrenTgt $idx))
               ((mkNullVex $childrenTgt) (List.getByIdx $childrenTgt $idx))
               ($else (Error (Node not found or invalid))))))
 
-(: insertNodeAtPosition (-> (Tree $a) NodeId (Node $n) (Tree $a)))
+;;(: insertNodeAtPosition (-> (Tree $a) NodeId (Node $n) (Tree $a)))
 (= (insertNodeAtPosition $tree (mkNodeId $id) $newNode)
    (if (or (== $id ()) (== (mkNodeId $id) (mkNodeId (0))))
        (mkTree $newNode (Cons $tree Nil))
@@ -225,14 +225,14 @@
              )
              (replaceNodeById $tree (mkNodeId $id) $newSubtree))))
 ;; check if tree is empty
-(: isEmpty (-> (Tree $a) Bool))
+;;(: isEmpty (-> (Tree $a) Bool))
 (= (isEmpty $tree)
     (case $tree
         (((mkNullVex Nil) True)
         ($else False))))
         
 ;; check if tree is null vertex 
-(: isNullVertex (-> (Tree $a) Bool))
+;;(: isNullVertex (-> (Tree $a) Bool))
 (= (isNullVertex $tree)
     (case $tree
         (((mkNullVex $children) True)
@@ -240,7 +240,7 @@
 
 ;; Takes a tree and decides if the node is an argument or not.
 ;; An argument is anything that's not an operator or a null vertex.
-(: isArgument (-> (Tree $a) Bool))
+;;(: isArgument (-> (Tree $a) Bool))
 (= (isArgument (mkNullVex $x)) False)
 (= (isArgument (mkTree (mkNode $x) $children))
    (and (not (is-member $x (AND OR NOT))) (== $children Nil)))
@@ -249,7 +249,7 @@
 ;;  The complexity of a tree is the number of arguments it contains.
 ;;  That means, ANDs, ORs and NOTs have no complexity. 
 ;; Knobs, or null vetices aren't included in the complexity calculatio.
-(: treeComplexity (-> (Tree $a) Number))
+;;(: treeComplexity (-> (Tree $a) Number))
 (= (treeComplexity (mkNullVex $x)) 0)
 (= (treeComplexity (mkTree (mkNode $a) $children)) ;; AND, OR and NOT have no complexity
    (if (isArgument (mkTree (mkNode $a) $children))
@@ -258,12 +258,12 @@
 
 ;; NOTE: for future use -- a function to determine the alphabet size of a given tree for computation of complexity ratio
 ;; takes a truth table and adds 3 (for AND,. OR and NOT) to the number of input labels
-(: alphabetSize (-> (ITable $a) Number))
+;;(: alphabetSize (-> (ITable $a) Number))
 (= (alphabetSize (mkITable $rows $labels)) 
     (+ 3 (- (List.length $labels) 1)))                   
 
 ;; extract labels from a tree structure as list of symbols
-(: extractArgs (-> (Tree $a) (List Symbol)))
+;;(: extractArgs (-> (Tree $a) (List Symbol)))
 (= (extractArgs (mkTree (mkNode $node) $children))
     (if (is-member $node (AND OR NOT))
         (extractArgsFromList $children)         ;; if it's an operator, collect args from children
@@ -271,7 +271,7 @@
     
 
 ;; apply the above function recursively accross the tree's children        
-(: extractArgsFromList (-> (List (Tree $a)) (List Symbol)))
+;;(: extractArgsFromList (-> (List (Tree $a)) (List Symbol)))
 (= (extractArgsFromList Nil) Nil)
 (= (extractArgsFromList (Cons $head $tail))
     (List.appendList (extractArgsFromList $tail) (extractArgs $head)))   
@@ -287,7 +287,7 @@
 (= (pruneExemplar $exemplar $arg-set)
     (foldl-atom $arg-set $exemplar $acc $arg (removeLiteral $acc $arg)))   
     
-(: removeLiteral (-> (Tree $a) Symbol (Tree $a)))
+;;(: removeLiteral (-> (Tree $a) Symbol (Tree $a)))
 (= (removeLiteral (mkTree (mkNode $node) $children) $symbol)
     (if (is-member $node (AND OR NOT))
         (mkTree (mkNode $node) (List.mapOverArg removeLiteral $children $symbol))
