@@ -3,8 +3,8 @@
 ; (: Node (-> $a Type))
 ; (: mkNode (-> $a (Node $a)))
 
-(: NullVertex (Tree $a))
-(: mkNullVex (-> (List (Tree $a)) (Tree $a)))
+; (: NullVertex (Tree $a))
+; (: mkNullVex (-> (List (Tree $a)) (Tree $a)))
 
 ; (: getNodeValue (-> (Tree $a) (Node $a)))
 (= (getNodeValue (mkNullVex $xs)) (Error (mkNullVex $xs) "Null Vertex has no value"))
@@ -77,7 +77,7 @@
 ;;   NodeId: The id of the targetTree if found.
 ; (: getNodeId (-> (Tree $a) (Tree $a) NodeId))
 ; (: getNodeId (-> (Tree $a) (Tree $a) NodeId NodeId))
-(= (getNodeId $tree $targetTree) (getNodeId $tree $targetTree (mkNodeId (0))))
+(= (getNodeId $tree $targetTree) (eval (getNodeId $tree $targetTree (mkNodeId (0)))))
 (= (getNodeId $tree $targetTree (mkNodeId $parentIdx))
     (if (== $tree $targetTree)
         (mkNodeId $parentIdx)
