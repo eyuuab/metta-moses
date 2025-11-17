@@ -35,7 +35,11 @@ def extract_and_print(result, path, idx) -> bool:
 
     # Treat exit code 0 as success, anything else as failure
     if result.returncode == 0:
-        extracted = "test passed"
+        if "❌" in extracted:
+            has_failure = True
+            extracted = f"test failed (output: {extracted})"
+        else:
+            extracted = "test passed"
     else:
         has_failure = True
         extracted = f"test failed (output: {extracted})"
