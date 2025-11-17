@@ -40,7 +40,7 @@
 
 
 ;; Retrieves the node ID from a Logical Subtree Knob (LSK).
-(: getNodeId (-> LogicalSubtreeKnob NodeId))
+; (: getNodeId (-> LogicalSubtreeKnob NodeId))
 (= (getNodeId (mkLSK (mkDiscKnob (mkKnob $nodeId) $multi $default $current $discSpecList)))
    $nodeId)
 

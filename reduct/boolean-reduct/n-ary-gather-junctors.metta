@@ -17,7 +17,7 @@
 )
 
 
-(: addAND (-> Expression Bool Expression))
+; (: addAND (-> Expression Bool Expression))
 (= (addAND $expr $isFinal)
     (if (and $isFinal (or (== (car-atom $expr) OR) (== (car-atom $expr) NOT)))
         (AND $expr)
@@ -25,7 +25,7 @@
     )
 )
 
-(: addAND (-> Expression Expression))
+; (: addAND (-> Expression Expression))
 (= (addAND $expr)
   (if (== (get-metatype $expr) Expression)
       (addAND $expr (car-atom $expr) ())
