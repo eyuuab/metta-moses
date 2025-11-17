@@ -1,6 +1,6 @@
-! (register-module! ../../../../metta-moses)
+; ! (register-module! ../../../../metta-moses)
 
-! (import! &self metta-moses:reduct:boolean-reduct/propagate-not)
+!(import! &self ../propagate-not)
 
 ;; Test 01
 !(assertEqual
