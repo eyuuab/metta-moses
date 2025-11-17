@@ -1,5 +1,3 @@
-; ! (register-module! ../../../../metta-moses)
-
 !(import! &self ../propagate-not)
 
 ;; Test 01

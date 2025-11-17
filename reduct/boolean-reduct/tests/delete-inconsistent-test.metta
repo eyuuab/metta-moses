@@ -1,5 +1,3 @@
-; ; !(register-module! ../../../../metta-moses)
-
 !(import! &self ../../../utilities/general-helpers)
 !(import! &self ../rte-helpers)
 !(import! &self ../delete-inconsistent-handle)

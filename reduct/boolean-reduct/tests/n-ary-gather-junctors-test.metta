@@ -1,5 +1,3 @@
-; !(register-module! ../../../../metta-moses)
-
 !(import! &self ../../../utilities/general-helpers)
 !(import! &self ../n-ary-gather-junctors)
 
