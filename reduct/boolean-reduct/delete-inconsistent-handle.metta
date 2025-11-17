@@ -59,7 +59,7 @@
 )
 
 ;; This function is used to handle nested current expressions 
-(: applyDeleteIncons (-> Expression Expression Expression (Expression Expression Bool)))
+; (: applyDeleteIncons (-> Expression Expression Expression (Expression Expression Bool)))
 (= (applyDeleteIncons $parent $current $dominantSet)
     (let*
         (
@@ -71,12 +71,11 @@
         )
         (if (== $children ())
             ($newParent $newCurrent $applied)
-            ; (deleteInconsistentHandle $parent $current $dominantSet)
             (let*
                 (
-                    ; (() (println! (Applying DeleteIncons on children...)))
+                    ; ($log (println! (Applying DeleteIncons on children...)))
                     (($child $rest) (decons-atom $children))
-                    ; (() (println! (Child: $child Rest: $rest)))
+                    ; ($log' (println! (Child: $child Rest: $rest)))
                     ($grandChild (getChildrenExp $child))
                     (($UpdatedChildren $unwt $appliedOnChild)
                                         (if (== $grandChild ())
@@ -86,19 +85,19 @@
                                           )
                                         )
                     )
-                    ; (() (println! (UpdatedChildren: $UpdatedChildren)))
+                    ; ($log'' (println! (UpdatedChildren: $UpdatedChildren)))
                     (($updatedCurrent $updatedchild $appliedOnCurrent) (if (=== $child $UpdatedChildren) (deleteInconsistentHandle $newCurrent $child $dominantSet) ((findAndReplace $child $UpdatedChildren $newCurrent) $UpdatedChildren $appliedOnChild)))
                     ($updatedParent (findAndReplace $newCurrent $updatedCurrent $newParent))
-                    ; (()(println! (Updated Parent: $UpdatedParent : UpdatedCurrent: $updatedCurrent Bool: (any $appliedOnCurrent $appliedOnChild $applied) )))
+                    ; ($log''' (println! (Updated Parent: $updatedParent : UpdatedCurrent: $updatedCurrent Bool: (any $appliedOnCurrent $appliedOnChild $applied) )))
                 )
-                ; (applyDeleteIncons $UpdatedParent $updatedCurrent $dominantSet (any ($appliedOnCurrent $appliedOnChild $applied)) $rest)
-                (applyDeleteIncons $UpdatedParent $updatedCurrent $dominantSet $appliedOnCurrent $rest)
+                ; (applyDeleteIncons $updatedParent $updatedCurrent $dominantSet (any ($appliedOnCurrent $appliedOnChild $applied)) $rest)
+                (applyDeleteIncons $updatedParent $updatedCurrent $dominantSet $appliedOnCurrent $rest)
             )    
         )
     )
 )
 
-(: applyDeleteIncons (-> Expression Expression Expression Bool Expression (Expression Expression Bool)))
+; (: applyDeleteIncons (-> Expression Expression Expression Bool Expression (Expression Expression Bool)))
 (= (applyDeleteIncons $parent $current $dominantSet $applied $children)   
     (if (== $children ())
         ($parent $current $applied)
@@ -117,7 +116,7 @@
     )
 )
 
-(: applyDeleteIncons (-> Expression Expression Expression Expression Bool Bool (Expression Expression Bool)))
+; (: applyDeleteIncons (-> Expression Expression Expression Expression Bool Bool (Expression Expression Bool)))
 (= (applyDeleteIncons $parent $current $dominantSet $children $appliedToParent $checkingChild)
     (if (== $children ())
         (deleteInconsistentHandle $parent $current $dominantSet)

@@ -1,8 +1,12 @@
 
-!(import! &self ../list-methods)
-!(import! &self ../general-helpers)
-!(import! &self ../../representation/instance)
-!(import! &self ../../scoring/cscore)
+
+; !(register-module! ../../../metta-moses)
+
+!(import! &self ../../../metta-moses/utilities/list-methods)
+!(import! &self ../../../metta-moses/utilities/general-helpers)
+!(import! &self ../../../metta-moses/representation/instance)
+!(import! &self ../../../metta-moses/scoring/cscore)
+
 
 
 ;; Test cases for List.foldr
@@ -17,9 +21,11 @@
 !(assertEqual (List.foldl - 0 (Cons 10 (Cons 5 (Cons 2 Nil)))) 7)
 
 ;; Test cases for List.sum
-!(assertEqual (List.sum (Cons 1 (Cons 2 (Cons 3 (Cons 2 (Cons 3 Nil)))))) 11)
-!(assertEqual (List.sum (Cons 1 (Cons 2 (Cons 3 (Cons 4 Nil))))) 10)
-!(assertEqual (List.sum (Cons 3.0 (Cons 4.0 (Cons 5.0 (Cons 5.0 (Cons 5.0 (Cons 5.0 (Cons 4.0 (Cons 5.0 (Cons 4.0 (Cons 4.0 (Cons 4.0 (Cons 5.0 (Cons 5.0 (Cons 4.0 (Cons 5.0 (Cons 5.0 (Cons 5.0 (Cons 4.0 (Cons 5.0 (Cons 5.0 (Cons 5.0 (Cons 5.0 (Cons 5.0 (Cons 4.0 (Cons 5.0 (Cons 4.0 Nil))))))))))))))))))))))))))) 119)
+
+!(test (List.sum (Cons 1 (Cons 2 (Cons 3 (Cons 2 (Cons 3 Nil)))))) 11)
+!(test (List.sum (Cons 1 (Cons 2 (Cons 3 (Cons 4 Nil))))) 10)
+!(test (List.sum (Cons 3.0 (Cons 4.0 (Cons 5.0 (Cons 5.0 (Cons 5.0 (Cons 5.0 (Cons 4.0 (Cons 5.0 (Cons 4.0 (Cons 4.0 (Cons 4.0 (Cons 5.0 (Cons 5.0 (Cons 4.0 (Cons 5.0 (Cons 5.0 (Cons 5.0 (Cons 4.0 (Cons 5.0 (Cons 5.0 (Cons 5.0 (Cons 5.0 (Cons 5.0 (Cons 4.0 (Cons 5.0 (Cons 4.0 Nil))))))))))))))))))))))))))) 119.0)
+
 
 ;; Test cases for List.append
 !(assertEqual (List.append 3 (Cons 1 (Cons 2 Nil))) (Cons 1 (Cons 2 (Cons 3 Nil))))
@@ -100,8 +106,10 @@
 !(assertEqual (List.tail Nil) Nil)
 !(assertEqual (List.tail (Cons 1 (Cons 2 Nil))) (Cons 2 Nil))
 
-;; Test case for List.sub
-!(assertEqual (List.sub (Cons 1 (Cons 3 Nil)) (Cons 0 (Cons 3 Nil))) (Cons 1 (Cons 0 Nil)))
+
+; ;; Test case for List.sub
+!(test (List.sub (Cons 1 (Cons 3 Nil)) (Cons 0 (Cons 3 Nil))) (Cons 1 (Cons 0 Nil)))
+
 !(assertEqual (List.sub (Cons 1 (Cons 3 Nil)) (Cons 0 (Cons 3 (Cons 2 Nil)))) (Error (Cons 2 Nil) LenghtOfListNotEqual))
 
 ;; Test case for List.zip
@@ -121,7 +129,9 @@
 !(assertEqual (List.drop 1 (Cons A (Cons B Nil))) (Cons B Nil))
 !(assertEqual (List.drop 2 (Cons A (Cons B (Cons C Nil)))) (Cons C Nil))
 
-;; Test case for List.flatten
+
+; ;; Test case for List.flatten
+
 !(assertEqual (List.flatten (Cons (Cons 1 Nil) (Cons (Cons 2 Nil) Nil))) (Cons 1 (Cons 2 Nil)))
 !(assertEqual (List.flatten (Cons (Cons 1 Nil) (Cons (Cons 2 (Cons 3 Nil)) Nil))) (Error (Cons 2 (Cons 3 Nil)) "Can't be flattened"))
 
@@ -195,7 +205,9 @@
 !(assertEqual (List.takeNFrom 2 3 (Cons 0 (Cons 1 (Cons 2 (Cons 3 (Cons 4 (Cons 5 Nil)))))))
                (Cons 2 (Cons 3 (Cons 4 Nil))))
 !(assertEqual (List.takeNFrom 0 3 (Cons 0 (Cons 1 (Cons 2 (Cons 3 (Cons 4 (Cons 5 Nil)))))))
-             (Cons 0 (Cons 1 (Cons 2 Nil))))
+
+               (Cons 0 (Cons 1 (Cons 2 Nil))))
+
 !(assertEqual (List.takeNFrom 3 2 (Cons 0 (Cons 1 (Cons 2 (Cons 3 (Cons 4 Nil))))))
                (Cons 3 (Cons 4 Nil)))
 !(assertEqual (List.takeNFrom 4 3 (Cons 0 (Cons 1 (Cons 2 (Cons 3 (Cons 4 Nil))))))
