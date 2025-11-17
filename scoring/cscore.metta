@@ -84,7 +84,7 @@
     (mkCscore (* -1 (pow-math 10 308)) 0 0.0 0.0 (* -1 (pow-math 10 308))))
 
 ;; score getters
-(: getPenScore (-> Cscore Number))
+; (: getPenScore (-> Cscore Number))
 (= (getPenScore (mkCscore $scor $cpxy $complexityPenalty $uniformityPenalty $penalizedScore)) $penalizedScore)
 
 (: getScore (-> Cscore Number))
