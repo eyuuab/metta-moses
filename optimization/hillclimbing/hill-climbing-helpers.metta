@@ -42,7 +42,7 @@
 ;;   Count of instances at distance $dist from $inst
 
 ; a helper function to the countNeighborhood method
-(: countNeighborhoodFromIdx (-> KnobMap Instance Number Number Number Number))
+;; (: countNeighborhoodFromIdx (-> KnobMap Instance Number Number Number Number))
 (= (countNeighborhoodFromIdx (mkKbMap $dscKbMp (mkDscMp $dscMp)) $inst $dist $startIdx $maxCount)
 (if (== $dist 0) 
     1 
@@ -60,7 +60,7 @@
                  $uUpdatedNumInstances))))))
 
 ; countNeighborhood
-(: countNeighborhood (-> KnobMap Instance Number Number Number))
+;; (: countNeighborhood (-> KnobMap Instance Number Number Number))
 (= (countNeighborhood $kbMap $inst $dist $maxCount)
 (countNeighborhoodFromIdx $kbMap $inst $dist 0 $maxCount))
 
@@ -103,10 +103,10 @@
 (: crossoverFs (-> Number Number Instance (InstanceSet $a) ((InstanceSet $a) Number)))
 (= (crossoverFs $size $nNewInstances $centerInst $scoredInstSet) (trace! (Running cross over for $centerInst) ((crossTopOneFs $scoredInstSet $nNewInstances 0 $size $centerInst) $nNewInstances))) ;; WARN: The $nNewInstances might not be the actual number of instances created.
 
-(: returnBest (-> (ScoredInstance Number) (ScoredInstance Number) (ScoredInstance Number)))
+;; (: returnBest (-> (ScoredInstance Number) (ScoredInstance Number) (ScoredInstance Number)))
 (= (returnBest (mkSInst $inst1) (mkSInst $inst2)) (returnBest < (mkSInst $inst1) (mkSInst $inst2)) )
 
-(: returnBest (-> (-> $score $score Bool) (ScoredInstance $score) (ScoredInstance $score) (ScoredInstance $score)))
+;; (: returnBest (-> (-> $score $score Bool) (ScoredInstance $score) (ScoredInstance $score) (ScoredInstance $score)))
 (= (returnBest $lessFn (mkSInst $inst1) (mkSInst $inst2))
    (if (apply $lessFn (Pair.second $inst1) (Pair.second $inst2))
        (mkSInst $inst2)
@@ -132,10 +132,10 @@
 ;;      Check if the score has improve, if so update the center instance by the best instance found. Set the distance to 1. and change already xover to false.
 ;;      If not, check if no crossover was made and if so increase the distance by 1.
 ;;      If it is the first time through the loop, we should not exit but we should set the distance to 1 and retry the iteration.
-(: hillClimbing (-> Deme (TruthTableBScore $a) Instance (Instance Deme $state)))
+;; (: hillClimbing (-> Deme (TruthTableBScore $a) Instance (Instance Deme $state)))
 (= (hillClimbing $deme $tTableBscorer $centerInst) (hillClimbing (1 3 0) (False False False $centerInst (worstCscore) (* -1 (pow-math 10 308)) 0 0 1) $deme $tTableBscorer $centerInst))
 
-(: hillClimbing (-> $params $state Deme (TruthTableBScore $a) Instance (Instance Deme $state)))
+;; (: hillClimbing (-> $params $state Deme (TruthTableBScore $a) Instance (Instance Deme $state)))
 (= (hillClimbing ($maxDist $minXoverNeighbors $bestPossibleScore) ;; Constant parameters
                  ($alreadyXover $lastChance $_ $prevCenter $bestCscore $bestScore $currentNInstances $d $i) ;; Mutable states
                  (mkDeme (mkRep (mkKbMap (mkDscKbMp $idxMp) (mkDscMp $disc)) $tree) $instSet $id) ;; Deme
@@ -240,11 +240,9 @@
 
 
 ;; hillclimbing implementation for feature selection
-(: hillClimbingFs (-> (InstanceSet $a) (ITable Bool) Instance Symbol (Instance (InstanceSet $a) $state)))
-                                                                                                                                                             ;;miConf PrePenalty  PreMInActivation   PreMaxActivation  PrePositive   ScorerType
-(= (hillClimbingFs $instSet $iTable $centerInst $scorerType) (hillClimbingFs (3 3 1) (False False False $centerInst 0 0 0 0 1) $instSet $iTable $centerInst 50.0    1.0         0.5                 1.0               True            $scorerType))
-
-(: hillClimbingFs (-> $params $state (InstanceSet $a) (ITable Bool) Instance Number Number Number Number Bool Symbol (Instance (InstanceSet $a) $state)))
+;; (: hillClimbingFs (-> (InstanceSet $a) (ITable Bool) Instance Symbol (Instance (InstanceSet $a) $state)))
+(= (hillClimbingFs $instSet $iTable $centerInst $scorerType) (hillClimbingFs (3 3 1) (False False False $centerInst 0 0 0 0 1) $instSet $iTable $centerInst 50.0 1.0 0.5 1.0 True $scorerType))
+;; (: hillClimbingFs (-> $params $state (InstanceSet $a) (ITable Bool) Instance Number Number Number Number Bool Symbol (Instance (InstanceSet $a) $state)))
 (= (hillClimbingFs ($maxDist $minXoverNeighbors $bestPossibleScore) ;; Constant parameters
                  ($alreadyXover $lastChance $_ $prevCenter $bestMIscore $bestScore $currentNInstances $d $i) ;; Mutable states
                  $instSet
