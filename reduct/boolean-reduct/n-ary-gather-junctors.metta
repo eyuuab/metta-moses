@@ -32,7 +32,7 @@
       (addAND $expr () ())
   ))
 
-(: addAND (-> Expression Symbol Symbol Expression))
+; (: addAND (-> Expression Symbol Symbol Expression))
 (= (addAND $expr $parent $prev)
     (case (get-metatype $expr)
         (
@@ -52,9 +52,9 @@
                         (
                             ((NOT True) $expr)
                             ((NOT False) (AND $expr))
-                            ((OR True) (map-atom $expr $x (addAND $x $h $h)))
-                            ((OR False) (AND (map-atom $expr $x (addAND $x $h $h))))
-                            ((AND $_) (map-atom $expr $x (addAND $x AND $h)))
+                            ((OR True) (collapse (addAND (superpose $expr) $h $h)))
+                            ((OR False) (AND (collapse (addAND (superpose $expr) $h $h))))
+                            ((AND $_) (collapse (addAND (superpose $expr) AND $h)))
                             (($else $__) (if (== $t ()) (addAND $h () ()) (AND)))
                         )
                     )
