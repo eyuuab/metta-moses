@@ -30,9 +30,9 @@
 (= (preOrder (mkTree (mkNode $r) (Cons $x $xs)))
      (let*
          (
-           ($lc  (List.map preOrder (Cons $x $xs)))
-           ($lc' (List.filter (. not isUnit) $lc))
-           ($lcE (List.listToExpr $lc'))
+           ($lc  (eval (List.map preOrder (Cons $x $xs))))
+           ($lc' (eval (List.filter (compose not isUnit) $lc)))
+           ($lcE (eval (List.listToExpr $lc')))
            ;; (()   (println! (Root: $r Children: $lc Children': $lc' Expression: $lcE)))
            ($exp (cons-atom $r $lcE))
          )
@@ -48,12 +48,12 @@
             ;     (mkTree (mkNode $head) (exprToList (map buildTree $tail))))
             ; (mkTree (mkNode $expr) Nil)
             (let* (
-              (() (println! (-----------------------)))
-              (() (println! (Inside buildTree with expr: $expr)))
+              ($_ (println! (-----------------------)))
+              ($_ (println! (Inside buildTree with expr: $expr)))
               (($head $tail) (decons-atom $expr))
-              ($children (exprToList (map buildTree $tail)))
-              (() (println! (Building tree with head: $head And children: $children)))
-              (() (println! (FinalAnswer: (mkTree (mkNode $head) $children))))
+              ($children (eval (exprToList (map buildTree $tail))))
+              ($_ (println! (Building tree with head: $head And children: $children)))
+              ($_ (println! (FinalAnswer: (mkTree (mkNode $head) $children))))
             )
             (mkTree (mkNode $head) $children)
             )
@@ -69,7 +69,7 @@
         (
           ($preordered (preOrder $tree))
           (() (println! (Preordered: $preordered)))
-          ($reduced (reduce $preordered))
+          ($reduced (eval (reduce-to $preordered)))
           (() (println! (Reduced: $reduced)))
           )
         (buildTree $reduced)))
@@ -98,7 +98,7 @@
               (let ($_ $__ $nodeId $iter) $state $nodeId))
             (if (== $parentIdx (0)) ;; If parentIdx is (0) don't include it in the index.
                 (mkNodeId ((+ 1 $targetIdx)))
-                (mkNodeId (concatT $parentIdx ((+ 1 $targetIdx))))))))))
+                (mkNodeId (eval (concatT $parentIdx ((+ 1 $targetIdx)))))))))))
 
 ;; Helper function for the getNodeId function.
 ;;   The function's sole purpose is to make the
@@ -109,7 +109,7 @@
 (= (applyGetNodeId $currTree ($targetTree (mkNodeId $parentIdx) $accId $iter))
     (if (== $accId (mkNodeId (-1)))
         (chain (getNodeId $currTree $targetTree (mkNodeId ($iter))) $nodeId
-        (chain (if (== $parentIdx (0)) (mkNodeId $idx) (mkNodeId (concatT $parentIdx $idx))) $newId ;; If parentIdx (0) don't include it in the index.
+        (chain (if (== $parentIdx (0)) (mkNodeId $idx) (mkNodeId (eval (concatT $parentIdx $idx)))) $newId ;; If parentIdx (0) don't include it in the index.
           (let (mkNodeId $idx) $nodeId
             (if (== $idx (-1))
                 ($targetTree (mkNodeId $parentIdx) $nodeId (+ 1 $iter))
@@ -130,15 +130,15 @@
 (= (getSubtreeId $tree (mkNodeId $targetId) $subtree $iter)
    (let*
      (
-       ($targetNode (getNodeById $tree (mkNodeId $targetId)))
-       ($children   (getChildren $targetNode))
-       ($currNode   (List.getByIdx $children $iter))
+       ($targetNode (eval (getNodeById $tree (mkNodeId $targetId))))
+       ($children   (eval (getChildren $targetNode)))
+       ($currNode   (eval (List.getByIdx $children $iter)))
      )
      (if (== $currNode $subtree)
          (let*
            (
              ($index (+ $iter 1))
-             ($idOfSubtree (concatT $targetId ($index)))
+             ($idOfSubtree (eval (concatT $targetId ($index))))
            )
            (mkNodeId $idOfSubtree))
          (getSubtreeId $tree (mkNodeId $targetId) $subtree (+ $iter 1)))))
@@ -153,8 +153,8 @@
 ; (: getChildrenById (-> (Tree $a) NodeId (List (Tree $a))))
 
 (= (getChildrenById $tree (mkNodeId $id))
-   (let $targetNode (getNodeById $tree (mkNodeId $id))
-     (getChildren $targetNode)))
+   (let $targetNode (eval (getNodeById $tree (mkNodeId $id)))
+     (eval (getChildren $targetNode))))
 
 ;; Creates a new tree with a node inserted above the given tree as its parent.
 ;; Params:
@@ -184,14 +184,14 @@
        $newSubtree
        (let* (($headId (car-atom $id))
               ($tailId (cdr-atom $id))
-              ($children (getChildren $tree))
-              ($childToUpdate (List.getByIdx $children (- $headId 1)) )
+              ($children (eval (getChildren $tree)))
+              ($childToUpdate (eval (List.getByIdx $children (- $headId 1))) )
               ($updatedChild
                  (if (== $tailId ())
                      $newSubtree
                      (replaceNodeById $childToUpdate (mkNodeId $tailId) $newSubtree)))
               ($newChildren
-                 (List.replaceAt $children (- $headId 1) $updatedChild)))
+                 (eval (List.replaceAt $children (- $headId 1) $updatedChild))))
          
          (updateChildren $tree $newChildren))))
 
@@ -209,7 +209,7 @@
    (let*
       (
         ( $tree (mkTree $node $children))
-        ( $targetNode (getNodeById $tree (mkNodeId $target)))
+        ( $targetNode (eval (getNodeById $tree (mkNodeId $target))))
         ( $childrenTgt (getChildren $targetNode))
         ( $updatedChildrenTgt (List.append $child $childrenTgt))
         ( $childIndex (List.length $updatedChildrenTgt))
@@ -219,7 +219,7 @@
         ;;    cause bad type error sometimes. For example, (2 3) 's type
         ;;    is (Number Number) and (0) 's type is (Number) hence the
         ;;    interpreter throws a bad type error.
-        ( $idOfChild (if (== (mkNodeId $target) (mkNodeId (0))) ($childIndex) (concatT $target ($childIndex))))
+        ( $idOfChild (if (== (mkNodeId $target) (mkNodeId (0))) ($childIndex) (eval (concatT $target ($childIndex)))))
         ( $newTargetSubtree (updateChildren $targetNode $updatedChildrenTgt))
         ( $updatedTree (replaceNodeById $tree (mkNodeId $target) $newTargetSubtree))
       )
@@ -242,10 +242,10 @@
    (if (or (== $id ()) (== (mkNodeId $id) (mkNodeId (0))))
        (mkTree $newNode (Cons $tree Nil))
        (let* (
-               ($oldNode (getNodeById $tree (mkNodeId $id)))
+               ($oldNode (eval (getNodeById $tree (mkNodeId $id))))
                ($newSubtree (mkTree $newNode (Cons $oldNode Nil)))
              )
-             (replaceNodeById $tree (mkNodeId $id) $newSubtree))))
+             (eval (replaceNodeById $tree (mkNodeId $id) $newSubtree)))))
 ;; check if tree is empty
 
 ; (: isEmpty (-> (Tree $a) Bool))
@@ -284,7 +284,7 @@
 (= (treeComplexity (mkTree (mkNode $a) $children)) ;; AND, OR and NOT have no complexity
    (if (isArgument (mkTree (mkNode $a) $children))
        1
-       (List.sum (List.map treeComplexity $children))))          
+       (eval (List.sum (List.map treeComplexity $children)))))          
 
 ;; NOTE: for future use -- a function to determine the alphabet size of a given tree for computation of complexity ratio
 ;; takes a truth table and adds 3 (for AND,. OR and NOT) to the number of input labels
@@ -292,7 +292,7 @@
 ; (: alphabetSize (-> (ITable $a) Number))
 
 (= (alphabetSize (mkITable $rows $labels)) 
-    (+ 3 (- (List.length $labels) 1)))                   
+    (+ 3 (- (eval (List.length $labels)) 1)))                   
 
 ;; extract labels from a tree structure as list of symbols
 

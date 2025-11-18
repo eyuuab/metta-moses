@@ -642,4 +642,3 @@
 (hello world)
 !(assertEqual (unify &self (hello world) Yes No) Yes)
 !(assertEqual (unify &self (hello dream) Yes No) No)
-
