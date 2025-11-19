@@ -19,6 +19,5 @@ chmod +x run.sh
 repo_path=$(pwd)
 if ! echo "$PATH" | grep -q "$repo_path"; then
     export PATH="$PATH:$repo_path"
-    echo "export PATH=\$PATH:$repo_path" >> ~/.bashrc
-    source ~/.bashrc
+    echo "PATH=$PATH" >> $GITHUB_ENV
 fi
