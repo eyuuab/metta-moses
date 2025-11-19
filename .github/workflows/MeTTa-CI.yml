@@ -11,12 +11,15 @@ on:
 jobs:
   setup-and-test:
     runs-on: ubuntu-latest
-    container:
-      image: bluesky21/petta:latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      
+      - name: Run Setup script
+        run: |
+          chmod +x setup.sh
+          ./setup.sh
 
       - name: Run PeTTa test
         run: |
