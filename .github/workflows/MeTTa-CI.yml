@@ -20,6 +20,9 @@ jobs:
         run: |
           chmod +x setup.sh
           ./setup.sh
+      
+      - name: Debug PATH
+        run: echo $PATH
 
       - name: Run PeTTa test
         run: |
