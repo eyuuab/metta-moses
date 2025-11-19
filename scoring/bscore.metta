@@ -87,7 +87,7 @@
 
 ;; A wrapper function to return the complexity a tree.
 (: (getComplexity (-> (Tree $a) Number)))
-(= (getComplexity $tree) (treeComplexity $tree))
+(= (getComplexity $tree) (eval (treeComplexity $tree)))
 
 ;; Replace every occurence of a lable inside an expression with a truth value.
 ;;

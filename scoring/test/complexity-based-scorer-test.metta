@@ -1,21 +1,20 @@
-!(register-module! ../../../metta-moses)
-!(import! &self metta-moses:scoring:complexity-based-scorer)
-!(import! &self metta-moses:scoring:cscore)
-!(import! &self metta-moses:scoring:bscore)
-!(import! &self metta-moses:scoring:fitness)
-! (import! &self metta-moses:representation:lsk)
-! (import! &self metta-moses:representation:knob-mapper)
-! (import! &self metta-moses:representation:instance)
-! (import! &self metta-moses:representation:representation)
-! (import! &self metta-moses:representation:knob-representation)
+!(import! &self ../complexity-based-scorer)
+!(import! &self ../cscore)
+!(import! &self ../bscore)
+!(import! &self ../fitness)
+!(import! &self ../../representation/lsk)
+!(import! &self ../../representation/knob-mapper)
+!(import! &self ../../representation/instance)
+!(import! &self ../../representation/representation)
+!(import! &self ../../representation/knob-representation)
 
-! (import! &self metta-moses:utilities:map)
-! (import! &self metta-moses:utilities:tree) 
-! (import! &self metta-moses:utilities:nodeId)
-! (import! &self metta-moses:utilities:list-methods) 
-! (import! &self metta-moses:utilities:general-helpers) 
-! (import! &self metta-moses:utilities:ordered-multimap)
-! (import! &self metta-moses:utilities:python-treehelpers)
+!(import! &self ../../utilities/map)
+!(import! &self ../../utilities/tree) 
+!(import! &self ../../utilities/nodeId)
+!(import! &self ../../utilities/list-methods) 
+!(import! &self ../../utilities/general-helpers) 
+!(import! &self ../../utilities/ordered-multimap)
+;;!(import! &self ../../utilities/python-treehelpers)
 
 ;; TODO: Add REDUCE Function here when it's edge case if fixed.
 (= (APPEND_CHILD $tree $nodeId $child ) (py_appendChild $tree $nodeId $child))
@@ -61,14 +60,14 @@
               Nil)
             (mkTree (mkNode A) Nil)))
 
-! (bind! knobMapObj (mkKbMap
+!(bind! knobMapObj (mkKbMap
                       (mkDscKbMp (ConsMap ((mkNodeId (2 3)) 0) (ConsMap ((mkNodeId (3)) 1) (ConsMap ((mkNodeId (1)) 2) NilMap))))
                
                       (mkDscMp (ConsMMap ((mkDiscSpec 1) lsk1) (ConsMMap ((mkDiscSpec 0) lsk2) (ConsMMap ((mkDiscSpec 1) lsk3) NilMMap))))))
-! (bind! ttable1 (mkITable (Cons (Cons True (Cons False (Cons False (Cons True (Cons True Nil)))))
+!(bind! ttable1 (mkITable (Cons (Cons True (Cons False (Cons False (Cons True (Cons True Nil)))))
                         (Cons (Cons True (Cons True (Cons True (Cons False (Cons True Nil))))) Nil))
                         (Cons A (Cons B (Cons C (Cons D (Cons O Nil)) )))))
-! (bind! ttable2 (mkITable
+!(bind! ttable2 (mkITable
                     (Cons (Cons True (Cons True (Cons False (Cons True (Cons True Nil)))))
                     (Cons (Cons True (Cons False (Cons False (Cons True (Cons True Nil)))))
                     (Cons (Cons False (Cons True (Cons False (Cons True (Cons False Nil)))))

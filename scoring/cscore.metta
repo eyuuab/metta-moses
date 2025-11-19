@@ -106,8 +106,8 @@
 (= (cScoreExpr< (($scor $cpxy $complexityPenalty $uniformityPenalty $penalizedScore)) 
                     (($scor2 $cpxy2 $complexityPenalty2 $uniformityPenalty2 $penalizedScore2)))
     
-        (if (type-cast (isnan $penalizedScore) Bool &self)
-            (not (type-cast (isnan $penalizedScore2) Bool &self))
+        (if (isnan-math $penalizedScore)
+            (not (isnan-math $penalizedScore2))
             (or (< $penalizedScore $penalizedScore2) (and (== $penalizedScore $penalizedScore2) (> $cpxy $cpxy2)))))
             
 ;; Check for equality, to within floating-point error, EPSILON
@@ -125,7 +125,7 @@
 (: cScore>= (-> Cscore Cscore Bool)) 
 (= (cScore>= $cs1 $cs2)
     (let ($pl $pr $cl $cr) ((getPenScore $cs1) (getPenScore $cs2) (getComp $cs1) (getComp $cs2))
-        (if (isnan $pl)
+        (if (isnan-math $pl)
             False
             (or (> $pl $pr) (and (== $pl $pr) (< $cl $cr))))))
 
