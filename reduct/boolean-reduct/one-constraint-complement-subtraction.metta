@@ -23,7 +23,7 @@
             ($commonElements (collapse (intersection (superpose $poaGuardSet) (superpose $invertedCom))))
         )
          (collapse (let $el (superpose $parent)
-            (if (=== $el $poa)
+            (if (== $el $poa)
                 (collapse (subtraction (superpose $poa) (superpose $commonElements)))
                 $el)))))
 
