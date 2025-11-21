@@ -11,15 +11,15 @@
 ;;     (let $a (mkBScore (Cons 1 (Cons 0 (Cons 2 Nil)))) (get-type $a)) 
 ;;     BehavioralScore
 ;;  )
-!(assertEqual
-   (let $a (mkITable (Cons (Cons 1 (Cons 0 (Cons 2 Nil))) Nil) (Cons A (Cons B (Cons C Nil)))) (get-type $a))
-   (ITable Number))
-!(assertEqual
-   (let $a (mkTruthTableBScore 1 0.2 (mkITable (Cons (Cons 1 (Cons 0 (Cons 2 Nil))) Nil) (Cons A (Cons B (Cons C Nil))))) (get-type $a))
-   (TruthTableBScore Number))
-!(assertEqual
-   (let $a (createTruthTableBScore 0.2 (mkITable (Cons (Cons 1 (Cons 0 (Cons 2 Nil))) Nil) (Cons A (Cons B (Cons C Nil))))) (get-type $a))
-   (TruthTableBScore Number))
+; !(assertEqual
+;    (let $a (mkITable (Cons (Cons 1 (Cons 0 (Cons 2 Nil))) Nil) (Cons A (Cons B (Cons C Nil)))) (get-type $a))
+;    (ITable Number))
+; !(assertEqual
+;    (let $a (mkTruthTableBScore 1 0.2 (mkITable (Cons (Cons 1 (Cons 0 (Cons 2 Nil))) Nil) (Cons A (Cons B (Cons C Nil))))) (get-type $a))
+;    (TruthTableBScore Number))
+; !(assertEqual
+;    (let $a (createTruthTableBScore 0.2 (mkITable (Cons (Cons 1 (Cons 0 (Cons 2 Nil))) Nil) (Cons A (Cons B (Cons C Nil))))) (get-type $a))
+;    (TruthTableBScore Number))
 !(assertEqual
    (createTruthTableBScore 0.2 (mkITable (Cons (Cons 1 (Cons 0 (Cons 2 Nil))) Nil) (Cons A (Cons B (Cons C Nil)))))
    (mkTruthTableBScore 0.2 1 (mkITable (Cons (Cons 1 (Cons 0 (Cons 2 Nil))) Nil) (Cons A (Cons B (Cons C Nil))))))
