@@ -634,7 +634,13 @@
 (= (=== $x $y)
    (if (and (== (get-metatype $x) Symbol) (== (get-metatype $y) Symbol))
        (== $x $y)
-       (== (collapse (union (subtraction (superpose $x) (superpose $y)) (subtraction (superpose $y) (superpose $x)))) ())))
+       (let*
+            (
+                ($a (collapse (subtraction (superpose $x) (superpose $y))))
+                ($b (collapse (subtraction (superpose $y) (superpose $x))))
+            )
+            (== (union-atom $a $b) ())
+       )))
 
 ;; Number compartor
 (: compareNum (-> Number Number Atom))
